@@ -47,7 +47,7 @@ argparser.add_argument("--pssm_bias_flag", type=int, default=0, help="0 for Fals
 argparser.add_argument("--tied_positions_jsonl", type=str, default='', help="Path to a dictionary with tied positions for symmetric design.")
 ```
 -----------------------------------------------------------------------------------------------------
-Example to design some monomers:
+Example from `vanilla_proteinmpnn/examples/` to design some monomers:
 ```
 folder_with_pdbs="../PDB_monomers/pdbs/"
 
