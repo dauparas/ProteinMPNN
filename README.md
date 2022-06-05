@@ -2,7 +2,7 @@
 ![ProteinMPNN](https://docs.google.com/drawings/d/e/2PACX-1vTtnMBDOq8TpHIctUfGN8Vl32x5ISNcPKlxjcQJF2q70PlaH2uFlj2Ac4s3khnZqG1YxppdMr0iTyk-/pub?w=889&h=358)
 Read [ProteinMPNN paper](https://www.biorxiv.org/content/10.1101/2022.06.03.494563v1).
 
-To run ProteinMPNN clone this gihub repo and install PyTorch. 
+To run ProteinMPNN clone this github repo and install PyTorch. 
 
 Full protein backbone models: `vanilla_proteinmpnn`.
 
