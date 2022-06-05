@@ -1,18 +1,11 @@
 # ProteinMPNN
-
+-----------------------------------------------------------------------------------------------------
 ![ProteinMPNN](https://docs.google.com/drawings/d/e/2PACX-1vTtnMBDOq8TpHIctUfGN8Vl32x5ISNcPKlxjcQJF2q70PlaH2uFlj2Ac4s3khnZqG1YxppdMr0iTyk-/pub?w=889&h=358)
 
-See `FA_proteinmpn` for the full atom MPNN which can use side chain atoms as inputs.
+To run ProteinMPNN install PyTorch. 
 
-See `CA_proteinmpn` for the CA only MPNN which can uses only c-alpha coordinates to generate sequences.
-
-The latest version of the MPNN now called ProteinMPNN.
-
-ProteinMPNN code runs on pytorch 1.7> on both CPUs and GPUs, use `source activate mlfold` when running on digs.
-
-To generate sequences with the latest MPNN use: `protein_mpnn_run.py`. See some .sh examples here: `examples/` . One script handles both tied and untied generations. 
-
-For data loading have a look at the notebook: `notebooks/data_loading_example.ipynb`
+Full protein backbone models: `vanilla_proteinmpnn`.
+C-alpha only models: `ca_proteinmpnn`.
 
 -----------------------------------------------------------------------------------------------------
 Example to design monomers:
