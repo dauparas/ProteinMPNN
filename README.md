@@ -7,10 +7,10 @@ To run ProteinMPNN clone this github repo and install PyTorch.
 Full protein backbone models: `vanilla_proteinmpnn`.
 
 Code organization:
-* `vanilla_proteinmpnn/protein_mpnn_run.py` - the main script to initialialize and run the model
-* `vanilla_proteinmpnn/protein_mpnn_utils.py` - utility functions for the main script
+* `vanilla_proteinmpnn/protein_mpnn_run.py` - the main script to initialialize and run the model.
+* `vanilla_proteinmpnn/protein_mpnn_utils.py` - utility functions for the main script.
 * `vanilla_proteinmpnn/helper_scripts/` - helper functions to parse PDBs, assign which chains to design, which residues to fix, adding AA bias, tying residues etc.
-* `vanilla_proteinmpnn/examples/` - simple code examples
+* `vanilla_proteinmpnn/examples/` - simple code examples.
 -----------------------------------------------------------------------------------------------------
 Input flags:
 ```
