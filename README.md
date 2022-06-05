@@ -5,6 +5,7 @@
 To run ProteinMPNN install PyTorch. 
 
 Full protein backbone models: `vanilla_proteinmpnn`.
+
 C-alpha only models: `ca_proteinmpnn`.
 
 -----------------------------------------------------------------------------------------------------
