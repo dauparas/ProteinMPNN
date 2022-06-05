@@ -13,6 +13,8 @@ import torch.nn.functional as F
 import random
 import itertools
 
+#A number of functions/classes are adopted from: https://github.com/jingraham/neurips19-graph-protein-design
+
 def _scores(S, log_probs, mask):
     """ Negative log probabilities """
     criterion = torch.nn.NLLLoss(reduction='none')
@@ -931,7 +933,8 @@ class ProteinMPNN(nn.Module):
                     probs = (1-pssm_multi*pssm_coef_gathered[:,None])*probs + pssm_multi*pssm_coef_gathered[:,None]*pssm_bias_gathered
                 if pssm_log_odds_flag:
                     pssm_log_odds_mask_gathered = torch.gather(pssm_log_odds_mask, 1, t[:,None, None].repeat(1,1,pssm_log_odds_mask.shape[-1]))[:,0] #[B, 21]
-                    probs_masked = probs*pssm_log_odds_mask_gathered+1e-8
+                    probs_masked = probs*pssm_log_odds_mask_gathered
+                    probs_masked += probs * 0.001
                     probs = probs_masked/torch.sum(probs_masked, dim=-1, keepdim=True) #[B, 21]
                 if omit_AA_mask_flag:
                     omit_AA_mask_gathered = torch.gather(omit_AA_mask, 1, t[:,None, None].repeat(1,1,omit_AA_mask.shape[-1]))[:,0] #[B, 21]
@@ -1032,7 +1035,8 @@ class ProteinMPNN(nn.Module):
                     probs = (1-pssm_multi*pssm_coef_gathered[:,None])*probs + pssm_multi*pssm_coef_gathered[:,None]*pssm_bias_gathered
                 if pssm_log_odds_flag:
                     pssm_log_odds_mask_gathered = pssm_log_odds_mask[:,t]
-                    probs_masked = probs*pssm_log_odds_mask_gathered+1e-8
+                    probs_masked = probs*pssm_log_odds_mask_gathered
+                    probs_masked += probs * 0.001
                     probs = probs_masked/torch.sum(probs_masked, dim=-1, keepdim=True) #[B, 21]
                 if omit_AA_mask_flag:
                     omit_AA_mask_gathered = omit_AA_mask[:,t]
