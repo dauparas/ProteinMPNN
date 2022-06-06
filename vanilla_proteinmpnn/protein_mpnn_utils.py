@@ -123,7 +123,7 @@ def parse_PDB(path_to_pdb, input_chain_list=[]):
     chain_alphabet = init_alphabet + extra_alphabet
      
     if input_chain_list:
-        chain_alphabet = chain_ids    
+        chain_alphabet = input_chain_list  
 
     biounit_names = [path_to_pdb]
     for biounit in biounit_names:
