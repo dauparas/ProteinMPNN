@@ -3,7 +3,7 @@
 #SBATCH --mem=32g
 #SBATCH --gres=gpu:rtx2080:1
 #SBATCH -c 2
-#SBATCH --output=example_1.out
+#SBATCH --output=example_7.out
 
 source activate mlfold
 
