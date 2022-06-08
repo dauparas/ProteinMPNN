@@ -1115,4 +1115,35 @@ class ProteinMPNN(nn.Module):
         return log_conditional_probs
 
 
+    def unconditional_probs(self, X, mask, residue_idx, chain_encoding_all):
+        """ Graph-conditioned sequence model """
+        device=X.device
+        # Prepare node and edge embeddings
+        E, E_idx = self.features(X, mask, residue_idx, chain_encoding_all)
+        h_V = torch.zeros((E.shape[0], E.shape[1], E.shape[-1]), device=E.device)
+        h_E = self.W_e(E)
+
+        # Encoder is unmasked self-attention
+        mask_attend = gather_nodes(mask.unsqueeze(-1),  E_idx).squeeze(-1)
+        mask_attend = mask.unsqueeze(-1) * mask_attend
+        for layer in self.encoder_layers:
+            h_V, h_E = layer(h_V, h_E, E_idx, mask, mask_attend)
+
+        # Build encoder embeddings
+        h_EX_encoder = cat_neighbors_nodes(torch.zeros_like(h_V), h_E, E_idx)
+        h_EXV_encoder = cat_neighbors_nodes(h_V, h_EX_encoder, E_idx)
+
+        order_mask_backward = torch.zeros([X.shape[0], X.shape[1], X.shape[1]], device=device)
+        mask_attend = torch.gather(order_mask_backward, 2, E_idx).unsqueeze(-1)
+        mask_1D = mask.view([mask.size(0), mask.size(1), 1, 1])
+        mask_bw = mask_1D * mask_attend
+        mask_fw = mask_1D * (1. - mask_attend)
+
+        h_EXV_encoder_fw = mask_fw * h_EXV_encoder
+        for layer in self.decoder_layers:
+            h_V = layer(h_V, h_EXV_encoder_fw, mask)
+
+        logits = self.W_out(h_V)
+        log_probs = F.log_softmax(logits, dim=-1)
+        return log_probs
 

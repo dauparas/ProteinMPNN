@@ -178,6 +178,9 @@ def main(args):
         if not os.path.exists(base_folder + 'conditional_probs_only'):
             os.makedirs(base_folder + 'conditional_probs_only')
 
+    if args.unconditional_probs_only:
+        if not os.path.exists(base_folder + 'unconditional_probs_only'):
+            os.makedirs(base_folder + 'unconditional_probs_only')
  
     if args.save_probs:
         if not os.path.exists(base_folder + 'probs'):
@@ -230,6 +233,16 @@ def main(args):
                 concat_log_p = np.concatenate(log_conditional_probs_list, 0) #[B, L, 21]
                 mask_out = (chain_M*chain_M_pos*mask)[0,].cpu().numpy()
                 np.savez(conditional_probs_only_file, log_p=concat_log_p, S=S[0,].cpu().numpy(), mask=mask[0,].cpu().numpy(), design_mask=mask_out)
+            elif args.unconditional_probs_only:
+                print(f'Calculating sequence unconditional probabilities for {name_}')
+                unconditional_probs_only_file = base_folder + '/unconditional_probs_only/' + batch_clones[0]['name']
+                log_unconditional_probs_list = []
+                for j in range(NUM_BATCHES):
+                    log_unconditional_probs = model.unconditional_probs(X, mask, residue_idx, chain_encoding_all)
+                    log_unconditional_probs_list.append(log_unconditional_probs.cpu().numpy())
+                concat_log_p = np.concatenate(log_unconditional_probs_list, 0) #[B, L, 21]
+                mask_out = (chain_M*chain_M_pos*mask)[0,].cpu().numpy()
+                np.savez(unconditional_probs_only_file, log_p=concat_log_p, S=S[0,].cpu().numpy(), mask=mask[0,].cpu().numpy(), design_mask=mask_out)
             else:
                 randn_1 = torch.randn(chain_M.shape, device=X.device)
                 log_probs = model(X, S, mask, chain_M*chain_M_pos, residue_idx, chain_encoding_all, randn_1)
@@ -322,7 +335,7 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     argparser.add_argument("--path_to_model_weights", type=str, default="", help="Path to model weights folder;") 
-    argparser.add_argument("--model_name", type=str, default="v_48_020", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020, v_48_030, v_32_002, v_32_010; v_32_020, v_32_030; v_48_010=version with 48 edges 0.10A noise")
+    argparser.add_argument("--model_name", type=str, default="v_48_020", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020, v_48_030; v_48_010=version with 48 edges 0.10A noise")
  
     argparser.add_argument("--save_score", type=int, default=0, help="0 for False, 1 for True; save score=-log_prob to npy files")
     argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilites per position")
@@ -331,7 +344,8 @@ if __name__ == "__main__":
 
     argparser.add_argument("--conditional_probs_only", type=int, default=0, help="0 for False, 1 for True; output conditional probabilities p(s_i given the rest of the sequence and backbone)")    
     argparser.add_argument("--conditional_probs_only_backbone", type=int, default=0, help="0 for False, 1 for True; if true output conditional probabilities p(s_i given backbone)") 
-    
+    argparser.add_argument("--unconditional_probs_only", type=int, default=0, help="0 for False, 1 for True; output unconditional probabilities p(s_i given backbone) in one forward pass")   
+ 
     argparser.add_argument("--backbone_noise", type=float, default=0.00, help="Standard deviation of Gaussian noise to add to backbone atoms")
     argparser.add_argument("--num_seq_per_target", type=int, default=1, help="Number of sequences to generate per target")
     argparser.add_argument("--batch_size", type=int, default=1, help="Batch size; can set higher for titan, quadro GPUs, reduce this if running out of GPU memory")
