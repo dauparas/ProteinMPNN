@@ -116,12 +116,15 @@ def parse_PDB_biounits(x, atoms=['N','CA','C'], chain=None):
       return 'no_chain', 'no_chain'
 
 
-def parse_PDB(path_to_pdb):
+def parse_PDB(path_to_pdb, input_chain_list=None):
     c=0
     pdb_dict_list = []
     init_alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G','H', 'I', 'J','K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T','U', 'V','W','X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g','h', 'i', 'j','k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't','u', 'v','w','x', 'y', 'z']
     extra_alphabet = [str(item) for item in list(np.arange(300))]
     chain_alphabet = init_alphabet + extra_alphabet
+
+    if input_chain_list:
+        chain_alphabet = input_chain_list  
 
     biounit_names = [path_to_pdb]
     for biounit in biounit_names:
@@ -147,7 +150,7 @@ def parse_PDB(path_to_pdb):
         my_dict['name']=biounit[(fi+1):-4]
         my_dict['num_of_chains'] = s
         my_dict['seq'] = concat_seq
-        if s < len(chain_alphabet):
+        if s <= len(chain_alphabet):
             pdb_dict_list.append(my_dict)
             c+=1
     return pdb_dict_list
