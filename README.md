@@ -5,6 +5,7 @@ Read [ProteinMPNN paper](https://www.biorxiv.org/content/10.1101/2022.06.03.4945
 To run ProteinMPNN clone this github repo and install Python>=3.0, PyTorch, Numpy. 
 
 Full protein backbone models: `vanilla_proteinmpnn`.
+
 CA only models: `ca_proteinmpnn`.
 
 Code organization:
