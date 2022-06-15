@@ -16,6 +16,7 @@ def main(args):
     import torch.nn.functional as F
     import random
     import os.path
+    import subprocess
     from protein_mpnn_utils import loss_nll, loss_smoothed, gather_edges, gather_nodes, gather_nodes_t, cat_neighbors_nodes, _scores, _S_to_seq, tied_featurize, parse_PDB
     from protein_mpnn_utils import StructureDataset, StructureDatasetPDB, ProteinMPNN
    
@@ -300,7 +301,12 @@ def main(args):
                                     sorted_visible_chain_letters = np.argsort(visible_list_list[0])
                                     print_visible_chains = [visible_list_list[0][i] for i in sorted_visible_chain_letters]
                                     native_score_print = np.format_float_positional(np.float32(native_score.mean()), unique=False, precision=4)
-                                    f.write('>{}, score={}, fixed_chains={}, designed_chains={}, model_name={}\n{}\n'.format(name_, native_score_print, print_visible_chains, print_masked_chains, args.model_name, native_seq)) #write the native sequence
+                                    script_dir = os.path.dirname(os.path.realpath(__file__))
+                                    try:
+                                        commit_str = subprocess.check_output(f'git --git-dir {script_dir}/../.git rev-parse HEAD', shell=True).decode().strip()
+                                    except subprocess.CalledProcessError:
+                                        commit_str = 'unknown'
+                                    f.write('>{}, score={}, fixed_chains={}, designed_chains={}, model_name={}, git_hash={}\n{}\n'.format(name_, native_score_print, print_visible_chains, print_masked_chains, args.model_name, commit_str, native_seq)) #write the native sequence
                                 start = 0
                                 end = 0
                                 list_of_AAs = []
@@ -335,7 +341,7 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     argparser.add_argument("--path_to_model_weights", type=str, default="", help="Path to model weights folder;") 
-    argparser.add_argument("--model_name", type=str, default="v_48_020", help="ProteinMPNN model name: v_48_002, v_48_020; v_48_020=version with 48 edges 0.20A noise")
+    argparser.add_argument("--model_name", type=str, default="v_48_010", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020; v_48_020=version with 48 edges 0.20A noise")
  
     argparser.add_argument("--save_score", type=int, default=0, help="0 for False, 1 for True; save score=-log_prob to npy files")
     argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilites per position")
