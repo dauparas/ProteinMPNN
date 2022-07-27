@@ -20,9 +20,9 @@ path_for_parsed_chains=$output_dir"/parsed_pdbs.jsonl"
 path_for_tied_positions=$output_dir"/tied_pdbs.jsonl"
 path_for_designed_sequences=$output_dir"/temp_0.1"
 
-python ../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
+python ../../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
 
-python ../helper_scripts/make_tied_positions_dict.py --input_path=$path_for_parsed_chains --output_path=$path_for_tied_positions --homooligomer 1
+python ../../helper_scripts/make_tied_positions_dict.py --input_path=$path_for_parsed_chains --output_path=$path_for_tied_positions --homooligomer 1
 
 python ../protein_mpnn_run.py \
         --jsonl_path $path_for_parsed_chains \
