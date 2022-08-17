@@ -19,9 +19,9 @@ path_for_parsed_chains=$output_dir"/parsed_pdbs.jsonl"
 path_for_assigned_chains=$output_dir"/assigned_pdbs.jsonl"
 chains_to_design="A B"
 
-python ../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
+python ../../helper_scripts/parse_multiple_chains.py --ca_only --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
 
-python ../helper_scripts/assign_fixed_chains.py --input_path=$path_for_parsed_chains --output_path=$path_for_assigned_chains --chain_list "$chains_to_design"
+python ../../helper_scripts/assign_fixed_chains.py --input_path=$path_for_parsed_chains --output_path=$path_for_assigned_chains --chain_list "$chains_to_design"
 
 python ../protein_mpnn_run.py \
         --jsonl_path $path_for_parsed_chains \

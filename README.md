@@ -8,6 +8,8 @@ Full protein backbone models: `vanilla_proteinmpnn`.
 
 CA only models: `ca_proteinmpnn`.
 
+Helper scripts: `helper_scripts`.
+
 Code organization:
 * `vanilla_proteinmpnn/protein_mpnn_run.py` - the main script to initialialize and run the model.
 * `vanilla_proteinmpnn/protein_mpnn_utils.py` - utility functions for the main script.
@@ -83,7 +85,7 @@ fi
 
 path_for_parsed_chains=$output_dir"/parsed_pdbs.jsonl"
 
-python ../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
+python ../../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
 
 python ../protein_mpnn_run.py \
         --jsonl_path $path_for_parsed_chains \
@@ -106,9 +108,9 @@ fi
 path_for_parsed_chains=$output_dir"/parsed_pdbs.jsonl"
 path_for_tied_positions=$output_dir"/tied_pdbs.jsonl"
 
-python ../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
+python ../../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
 
-python ../helper_scripts/make_tied_positions_dict.py --input_path=$path_for_parsed_chains --output_path=$path_for_tied_positions --homooligomer 1
+python ../../helper_scripts/make_tied_positions_dict.py --input_path=$path_for_parsed_chains --output_path=$path_for_tied_positions --homooligomer 1
 
 python ../protein_mpnn_run.py \
         --jsonl_path $path_for_parsed_chains \
@@ -136,11 +138,11 @@ chains_to_design="A C"
 #The first amino acid in the chain corresponds to 1 and not PDB residues index for now.
 fixed_positions="1 2 3 4 5 6 7 8 23 25, 10 11 12 13 14 15 16 17 18 19 20 40" #fixing/not designing residues 1 2 3...25 in chain A and residues 10 11 12...40 in chain C
 
-python ../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
+python ../../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_pdbs --output_path=$path_for_parsed_chains
 
-python ../helper_scripts/assign_fixed_chains.py --input_path=$path_for_parsed_chains --output_path=$path_for_assigned_chains --chain_list "$chains_to_design"
+python ../../helper_scripts/assign_fixed_chains.py --input_path=$path_for_parsed_chains --output_path=$path_for_assigned_chains --chain_list "$chains_to_design"
 
-python ../helper_scripts/make_fixed_positions_dict.py --input_path=$path_for_parsed_chains --output_path=$path_for_fixed_positions --chain_list "$chains_to_design" --position_list "$fixed_positions"
+python ../../helper_scripts/make_fixed_positions_dict.py --input_path=$path_for_parsed_chains --output_path=$path_for_fixed_positions --chain_list "$chains_to_design" --position_list "$fixed_positions"
 
 python ../protein_mpnn_run.py \
         --jsonl_path $path_for_parsed_chains \

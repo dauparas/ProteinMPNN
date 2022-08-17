@@ -9,6 +9,7 @@ def main(args):
     
     folder_with_pdbs_path = args.input_path
     save_path = args.output_path
+    ca_only = args.ca_only
     
     alpha_1 = list("ARNDCQEGHILKMFPSTWYV-")
     states = len(alpha_1)
@@ -120,12 +121,22 @@ def main(args):
         concat_mask = []
         coords_dict = {}
         for letter in chain_alphabet:
-            xyz, seq = parse_PDB_biounits(biounit, atoms=['CA'], chain=letter)
+            if ca_only:
+                sidechain_atoms = ['CA']
+            else:
+                sidechain_atoms = ['N', 'CA', 'C',' O']
+            xyz, seq = parse_PDB_biounits(biounit, atoms=sidechain_atoms, chain=letter)
             if type(xyz) != str:
                 concat_seq += seq[0]
                 my_dict['seq_chain_'+letter]=seq[0]
                 coords_dict_chain = {}
-                coords_dict_chain['CA_chain_'+letter]=xyz.tolist()
+                if ca_only:
+                    coords_dict_chain['CA_chain_'+letter]=xyz.tolist()
+                else:
+                    coords_dict_chain['N_chain_' + letter] = xyz[:, 0, :].tolist()
+                    coords_dict_chain['CA_chain_' + letter] = xyz[:, 1, :].tolist()
+                    coords_dict_chain['C_chain_' + letter] = xyz[:, 2, :].tolist()
+                    coords_dict_chain['O_chain_' + letter] = xyz[:, 3, :].tolist()
                 my_dict['coords_chain_'+letter]=coords_dict_chain
                 s += 1
         fi = biounit.rfind("/")
@@ -147,6 +158,7 @@ if __name__ == "__main__":
 
     argparser.add_argument("--input_path", type=str, help="Path to a folder with pdb files, e.g. /home/my_pdbs/")
     argparser.add_argument("--output_path", type=str, help="Path where to save .jsonl dictionary of parsed pdbs")
+    argparser.add_argument("--ca_only", type=bool, action="store_true", default=False, help="parse a backbone-only structure (default: false)")
 
     args = argparser.parse_args()
     main(args)
