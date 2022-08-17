@@ -8,12 +8,11 @@ Full protein backbone models: `vanilla_proteinmpnn`.
 
 CA only models: `ca_proteinmpnn`.
 
-Helper scripts: `helper_scripts`.
+Helper scripts: `helper_scripts` - helper functions to parse PDBs, assign which chains to design, which residues to fix, adding AA bias, tying residues etc.
 
 Code organization:
 * `vanilla_proteinmpnn/protein_mpnn_run.py` - the main script to initialialize and run the model.
 * `vanilla_proteinmpnn/protein_mpnn_utils.py` - utility functions for the main script.
-* `vanilla_proteinmpnn/helper_scripts/` - helper functions to parse PDBs, assign which chains to design, which residues to fix, adding AA bias, tying residues etc.
 * `vanilla_proteinmpnn/examples/` - simple code examples.
 -----------------------------------------------------------------------------------------------------
 Input flags:
