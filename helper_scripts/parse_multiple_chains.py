@@ -124,7 +124,7 @@ def main(args):
             if ca_only:
                 sidechain_atoms = ['CA']
             else:
-                sidechain_atoms = ['N', 'CA', 'C',' O']
+                sidechain_atoms = ['N', 'CA', 'C', 'O']
             xyz, seq = parse_PDB_biounits(biounit, atoms=sidechain_atoms, chain=letter)
             if type(xyz) != str:
                 concat_seq += seq[0]
