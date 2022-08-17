@@ -19,7 +19,15 @@ def main(args):
     import subprocess
     from protein_mpnn_utils import loss_nll, loss_smoothed, gather_edges, gather_nodes, gather_nodes_t, cat_neighbors_nodes, _scores, _S_to_seq, tied_featurize, parse_PDB
     from protein_mpnn_utils import StructureDataset, StructureDatasetPDB, ProteinMPNN
-   
+
+    if args.seed:
+        seed=args.seed
+    else:
+        seed=int(np.random.randint(0, high=999, size=1, dtype=int)[0])
+
+    torch.manual_seed(seed)
+    random.seed(seed)
+    np.random.seed(seed)   
     
     hidden_dim = 128
     num_layers = 3 
@@ -306,7 +314,7 @@ def main(args):
                                         commit_str = subprocess.check_output(f'git --git-dir {script_dir}/../.git rev-parse HEAD', shell=True).decode().strip()
                                     except subprocess.CalledProcessError:
                                         commit_str = 'unknown'
-                                    f.write('>{}, score={}, fixed_chains={}, designed_chains={}, model_name={}, git_hash={}\n{}\n'.format(name_, native_score_print, print_visible_chains, print_masked_chains, args.model_name, commit_str, native_seq)) #write the native sequence
+                                    f.write('>{}, score={}, fixed_chains={}, designed_chains={}, CA_model_name={}, git_hash={}, seed={}\n{}\n'.format(name_, native_score_print, print_visible_chains, print_masked_chains, args.model_name, commit_str, seed, native_seq)) #write the native sequence
                                 start = 0
                                 end = 0
                                 list_of_AAs = []
@@ -342,6 +350,8 @@ if __name__ == "__main__":
     
     argparser.add_argument("--path_to_model_weights", type=str, default="", help="Path to model weights folder;") 
     argparser.add_argument("--model_name", type=str, default="v_48_010", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020; v_48_020=version with 48 edges 0.20A noise")
+
+    argparser.add_argument("--seed", type=int, default=0, help="If set to 0 then a random seed will be picked;")
  
     argparser.add_argument("--save_score", type=int, default=0, help="0 for False, 1 for True; save score=-log_prob to npy files")
     argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilites per position")
