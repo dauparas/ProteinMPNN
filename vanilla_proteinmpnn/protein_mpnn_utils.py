@@ -911,8 +911,9 @@ class ProteinMPNN(nn.Module):
         for t_ in range(N_nodes):
             t = decoding_order[:,t_] #[B]
             chain_mask_gathered = torch.gather(chain_mask, 1, t[:,None]) #[B]
+            mask_gathered = torch.gather(mask, 1, t[:,None]) #[B]
             bias_by_res_gathered = torch.gather(bias_by_res, 1, t[:,None,None].repeat(1,1,21))[:,0,:] #[B, 21]
-            if (chain_mask_gathered==0).all():
+            if (mask_gathered==0).all(): #for padded or missing regions only
                 S_t = torch.gather(S_true, 1, t[:,None])
             else:
                 # Hidden layers
@@ -1007,7 +1008,7 @@ class ProteinMPNN(nn.Module):
             logit_list = []
             done_flag = False
             for t in t_list:
-                if (chain_mask[:,t]==0).all():
+                if (mask[:,t]==0).all():
                     S_t = S_true[:,t]
                     for t in t_list:
                         h_S[:,t,:] = self.W_s(S_t)
@@ -1047,6 +1048,7 @@ class ProteinMPNN(nn.Module):
                     probs_masked = probs*(1.0-omit_AA_mask_gathered)
                     probs = probs_masked/torch.sum(probs_masked, dim=-1, keepdim=True) #[B, 21]
                 S_t_repeat = torch.multinomial(probs, 1).squeeze(-1)
+                S_t_repeat = (chain_mask[:,t]*S_t_repeat + (1-chain_mask[:,t])*S_true[:,t]).long() #hard pick fixed positions
                 for t in t_list:
                     h_S[:,t,:] = self.W_s(S_t_repeat)
                     S[:,t] = S_t_repeat
