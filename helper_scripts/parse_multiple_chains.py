@@ -2,7 +2,6 @@ import argparse
 
 def main(args):
 
-    from dateutil import parser
     import numpy as np
     import os, time, gzip, json
     import glob 
