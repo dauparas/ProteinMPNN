@@ -71,3 +71,22 @@ These are provided `examples/`:
 * `submit_example_7.sh` - return sequence unconditional probabilities (PSSM like)
 * `submit_example_8.sh` - add amino acid bias
 -----------------------------------------------------------------------------------------------------
+Output example:
+```
+>3HTN, score=1.1705, global_score=1.2045, fixed_chains=['B'], designed_chains=['A', 'C'], model_name=v_48_020, git_hash=015ff820b9b5741ead6ba6795258f35a9c15e94b, seed=37
+NMYSYKKIGNKYIVSINNHTEIVKALNAFCKEKGILSGSINGIGAIGELTLRFFNPKTKAYDDKTFREQMEISNLTGNISSMNEQVYLHLHITVGRSDYSALAGHLLSAIQNGAGEFVVEDYSERISRTYNPDLGLNIYDFER/NMYSYKKIGNKYIVSINNHTEIVKALNAFCKEKGILSGSINGIGAIGELTLRFFNPKTKAYDDKTFREQMEISNLTGNISSMNEQVYLHLHITVGRSDYSALAGHLLSAIQNGAGEFVVEDYSERISRTYNPDLGLNIYDFER
+>T=0.1, sample=1, score=0.7291, global_score=0.9330, seq_recovery=0.5736
+NMYSYKKIGNKYIVSINNHTEIVKALKKFCEEKNIKSGSVNGIGSIGSVTLKFYNLETKEEELKTFNANFEISNLTGFISMHDNKVFLDLHITIGDENFSALAGHLVSAVVNGTCELIVEDFNELVSTKYNEELGLWLLDFEK/NMYSYKKIGNKYIVSINNHTDIVTAIKKFCEDKKIKSGTINGIGQVKEVTLEFRNFETGEKEEKTFKKQFTISNLTGFISTKDGKVFLDLHITFGDENFSALAGHLISAIVDGKCELIIEDYNEEINVKYNEELGLYLLDFNK
+>T=0.1, sample=2, score=0.7414, global_score=0.9355, seq_recovery=0.6075
+NMYKYKKIGNKYIVSINNHTEIVKAIKEFCKEKNIKSGTINGIGQVGKVTLRFYNPETKEYTEKTFNDNFEISNLTGFISTYKNEVFLHLHITFGKSDFSALAGHLLSAIVNGICELIVEDFKENLSMKYDEKTGLYLLDFEK/NMYKYKKIGNKYVVSINNHTEIVEALKAFCEDKKIKSGTVNGIGQVSKVTLKFFNIETKESKEKTFNKNFEISNLTGFISEINGEVFLHLHITIGDENFSALAGHLLSAVVNGEAILIVEDYKEKVNRKYNEELGLNLLDFNL
+```
+* `score` - average over residues that were designed negative log probability of sampled amino acids
+* `global score` - average over all residues in all chains negative log probability of sampled/fixed amino acids
+* `fixed_chains` - chains that were not designed (fixed)
+* `designed_chains` - chains that were redesigned
+* `model_name/CA_model_name` - model name that was used to generate results, e.g. `v_48_020`
+* `git_hash` - github version that was used to generate outputs
+* `seed` - random seed
+* `T=0.1` - temperature equal to 0.1 was used to sample sequences
+* `sample` - sequence sample number 1, 2, 3...etc
+-----------------------------------------------------------------------------------------------------
