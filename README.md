@@ -58,4 +58,16 @@ For example to make a conda environment to run ProteinMPNN:
 * `conda create --name mlfold` - this creates conda environment called `mlfold`
 * `source activate mlfold` - this activate environment
 * `conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch` - install pytorch following steps from https://pytorch.org/
-
+-----------------------------------------------------------------------------------------------------
+These are provided `examples/`:
+* `submit_example_1.sh` - simple monomer example 
+* `submit_example_2.sh` - simple multi-chain example
+* `submit_example_3.sh` - directly from the .pdb path
+* `submit_example_3_score_only.sh` - return score only (model's uncertainty)
+* `submit_example_4.sh` - fix some residue positions
+* `submit_example_4_non_fixed.sh` - specify which positions to design
+* `submit_example_5.sh` - tie some positions together (symmetry)
+* `submit_example_6.sh` - homooligomer example
+* `submit_example_7.sh` - return sequence unconditional probabilities (PSSM like)
+* `submit_example_8.sh` - add amino acid bias
+-----------------------------------------------------------------------------------------------------
