@@ -30,12 +30,14 @@ def _S_to_seq(S, mask):
     seq = ''.join([alphabet[c] for c, m in zip(S.tolist(), mask.tolist()) if m > 0])
     return seq
 
-def parse_PDB_biounits(x, atoms=['N','CA','C'], chain=None):
+def parse_PDB_biounits(x, atoms: list[str] | None, chain: str | None = None):
   '''
   input:  x = PDB filename
           atoms = atoms to extract (optional)
   output: (length, atoms, coords=(x,y,z)), sequence
   '''
+  if atoms is None:
+    atoms = ["N", "CA", "C"]
 
   alpha_1 = list("ARNDCQEGHILKMFPSTWYV-")
   states = len(alpha_1)
