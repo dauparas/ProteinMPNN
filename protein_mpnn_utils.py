@@ -127,7 +127,7 @@ def parse_PDB(path_to_pdb, input_chain_list=None, ca_only=False) -> list[dict]:
         sidechain_atoms = ["N", "CA", "C", "O"]
 
     pdb_dict = {}
-    s = 0
+    num_chains = 0
     concat_seq = []
     for letter in chain_alphabet:
         xyz, seq = parse_PDB_biounits(path_to_pdb, atoms=sidechain_atoms, chain=letter)
@@ -145,13 +145,13 @@ def parse_PDB(path_to_pdb, input_chain_list=None, ca_only=False) -> list[dict]:
                     f"O_chain_{letter}": xyz[:, 3, :].tolist(),
                 }
             pdb_dict[f"coords_chain_{letter}"] = coords_dict_chain
-            s += 1
+            num_chains += 1
 
     fi = path_to_pdb.rfind("/")
     pdb_dict["name"] = path_to_pdb[(fi + 1) : -4]
-    pdb_dict["num_of_chains"] = s
+    pdb_dict["num_of_chains"] = num_chains
     pdb_dict["seq"] = "".join(concat_seq)
-    if s <= len(chain_alphabet):
+    if num_chains <= len(chain_alphabet):
         pdb_dict_list.append(pdb_dict)
 
     return pdb_dict_list
