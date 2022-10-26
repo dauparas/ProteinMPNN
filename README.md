@@ -17,6 +17,7 @@ Code organization:
 * `inputs/` - input PDB files for examples
 * `outputs/` - outputs from examples
 * `colab_notebooks/` - Google Colab examples
+* `training/` - code and data to retrain the model
 -----------------------------------------------------------------------------------------------------
 Input flags for `protein_mpnn_run.py`:
 ```
