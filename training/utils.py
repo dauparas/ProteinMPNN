@@ -230,7 +230,7 @@ def loader_pdb(item,params):
 
     pdbid,chid = item[0].split('_')
     PREFIX = "%s/pdb/%s/%s"%(params['DIR'],pdbid[1:3],pdbid)
-
+    
     # load metadata
     if not os.path.isfile(PREFIX+".pt"):
         return {'seq': np.zeros(5)}

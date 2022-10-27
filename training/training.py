@@ -62,7 +62,7 @@ def main(args):
    
     if args.debug:
         args.num_examples_per_epoch = 50
-        args.protein_length = 1000
+        args.max_protein_length = 1000
         args.batch_size = 1000
 
     train, valid, test = build_training_clusters(params, args.debug)
