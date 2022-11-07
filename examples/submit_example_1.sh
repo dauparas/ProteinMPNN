@@ -23,7 +23,7 @@ ${PYTHON} ../helper_scripts/parse_multiple_chains.py --input_path=$folder_with_p
 ${PYTHON} ../protein_mpnn_run.py \
     --jsonl_path $path_for_parsed_chains \
     --out_folder $output_dir \
-    --num_seq_per_target 2 \
+    --num_seq_per_target 10 \
     --sampling_temp "0.1" \
     --seed 37 \
     --batch_size 1
