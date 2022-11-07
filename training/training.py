@@ -201,11 +201,24 @@ def main(args):
             with open(logfile, 'a') as f:
                 f.write(f'epoch: {e+1}, step: {total_step}, time: {dt}, train: {train_perplexity_}, valid: {validation_perplexity_}, train_acc: {train_accuracy_}, valid_acc: {validation_accuracy_}\n')
             print(f'epoch: {e+1}, step: {total_step}, time: {dt}, train: {train_perplexity_}, valid: {validation_perplexity_}, train_acc: {train_accuracy_}, valid_acc: {validation_accuracy_}')
+            
+            checkpoint_filename_last = base_folder+'model_weights/epoch_last.pt'.format(e+1, total_step)
+            torch.save({
+                        'epoch': e+1,
+                        'step': total_step,
+                        'num_edges' : args.num_neighbors,
+                        'noise_level': args.backbone_noise,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.optimizer.state_dict(),
+                        }, checkpoint_filename_last)
+
             if (e+1) % args.save_model_every_n_epochs == 0:
                 checkpoint_filename = base_folder+'model_weights/epoch{}_step{}.pt'.format(e+1, total_step)
                 torch.save({
                         'epoch': e+1,
                         'step': total_step,
+                        'num_edges' : args.num_neighbors,
+                        'noise_level': args.backbone_noise, 
                         'model_state_dict': model.state_dict(),
                         'optimizer_state_dict': optimizer.optimizer.state_dict(),
                         }, checkpoint_filename)
@@ -215,7 +228,7 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     argparser.add_argument("--path_for_training_data", type=str, default="my_path/pdb_2021aug02", help="path for loading training data") 
-    argparser.add_argument("--path_for_outputs", type=str, default="./test", help="path for logs and model weights")
+    argparser.add_argument("--path_for_outputs", type=str, default="./exp_020", help="path for logs and model weights")
     argparser.add_argument("--previous_checkpoint", type=str, default="", help="path for previous model weights, e.g. file.pt")
     argparser.add_argument("--num_epochs", type=int, default=200, help="number of epochs to train for")
     argparser.add_argument("--save_model_every_n_epochs", type=int, default=10, help="save model weights every n epochs")
