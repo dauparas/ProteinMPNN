@@ -1,4 +1,6 @@
+# edited for running on PyCharm
 import argparse
+import os
 
 def main(args):
 
@@ -102,7 +104,8 @@ def main(args):
     
     if folder_with_pdbs_path[-1]!='/':
         folder_with_pdbs_path = folder_with_pdbs_path+'/'
-    
+
+    folder_with_pdbs_path = '/'.join(__file__.split('/')[:-1]) + '/' + folder_with_pdbs_path
     
     init_alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G','H', 'I', 'J','K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T','U', 'V','W','X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g','h', 'i', 'j','k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't','u', 'v','w','x', 'y', 'z']
     extra_alphabet = [str(item) for item in list(np.arange(300))]
@@ -145,8 +148,12 @@ def main(args):
         if s < len(chain_alphabet):
             pdb_dict_list.append(my_dict)
             c+=1
-            
-            
+
+    # directory check
+    # from pathlib import Path
+    # Path('/'.join(save_path.split('/')[:-1])).mkdir(0o755,parents=True, exist_ok=True)
+
+    save_path = '/'.join(__file__.split('/')[:-1]) + '/'+ save_path
     with open(save_path, 'w') as f:
         for entry in pdb_dict_list:
             f.write(json.dumps(entry) + '\n')
