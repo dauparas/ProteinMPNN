@@ -448,6 +448,7 @@ class StructureDataset():
             'too_long': 0,
             'bad_seq_length': 0
         }
+        jsonl_file = '/'.join(__file__.split('/')[:-1]) + '/' + '/'.join(jsonl_file.split('/')[1:])
 
         with open(jsonl_file) as f:
             self.data = []

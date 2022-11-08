@@ -47,8 +47,10 @@ def main(args):
             model_folder_path = file_path[:k] + '/vanilla_model_weights/'
 
     checkpoint_path = model_folder_path + f'{args.model_name}.pt'
+
     folder_for_outputs = args.out_folder
-    
+
+
     NUM_BATCHES = args.num_seq_per_target//args.batch_size
     BATCH_COPIES = args.batch_size
     temperatures = [float(item) for item in args.sampling_temp.split()]

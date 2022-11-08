@@ -5,6 +5,8 @@
 #SBATCH -c 2
 #SBATCH --output=example_1.out
 
+#TODO
+
 source activate mlfold
 
 folder_with_pdbs="../inputs/mRFP#132777/"
