@@ -176,6 +176,12 @@ def main(args):
 
     print(40 * "-")
     checkpoint = torch.load(checkpoint_path, map_location=device)
+
+    """ 
+    Implementing Training function referring to the paper
+    
+    """
+
     print("Number of edges:", checkpoint["num_edges"])
     noise_level_print = checkpoint["noise_level"]
     print(f"Training noise level: {noise_level_print}A")
@@ -658,7 +664,7 @@ def main(args):
                                 )
                                 sample_number = j * BATCH_COPIES + b_ix + 1
                                 f.write(
-                                    ">T={}, sample={}, score={}, global_score={}, seq_recovery={}\n{}\n".format(
+                                    ">sample={}, T={}, score={}, global_score={}, seq_recovery={}\n{}\n".format(
                                         temp,
                                         sample_number,
                                         score_print,
