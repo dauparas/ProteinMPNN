@@ -665,8 +665,8 @@ def main(args):
                                 sample_number = j * BATCH_COPIES + b_ix + 1
                                 f.write(
                                     ">sample={}, T={}, score={}, global_score={}, seq_recovery={}\n{}\n".format(
-                                        temp,
                                         sample_number,
+                                        temp,
                                         score_print,
                                         global_score_print,
                                         seq_rec_print,
