@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../web/css/bootstrap-3.4.1.min.css"/> 
+    <link rel="stylesheet" href="../web/css/bootstrap-theme-3.4.1.min.css"/>
+    <link rel="stylesheet" href="../web/css/master.css"/>
+    <link rel="stylesheet" href="../web/css/jquery.fancybox.css"/>
+    <link rel="stylesheet" href="../web/css/jquery-ui.min.css"/>  
+    <title>mRFP | Models</title>
+    <style>
+      .noborder > thead > tr > th,
+      .noborder > tbody > tr > td {
+        border:0px;
+        padding:0px 5px 0px 5px;
+      }
+      .alignTbl tr[keyseqchain] span[nores] {
+        opacity:.3;
+      }
+
+      @media (min-width: 768px) {
+      #flex-panel-container > #left-panel {
+          width: 450px;
+          min-width: 280px;
+          padding-bottom: 16px;
+        }
+      }
+      dl.dl-models {
+        margin-bottom: 0px;
+      }
+      .dl-models dt, dd {
+        border-top: none;
+        padding: 0;
+      }
+      .dl-models dt {
+        font-size: 85%;
+        line-height: 90%;
+      }
+      .dl-models dd {
+        margin: 2px 0px 8px 12px;
+      }
+
+      .noborder tr > th:first-child, .noborder tr > td:first-child {
+        padding-left: 0px;
+      }
+      .noborder tr > th:last-child, .noborder tr > td:last-child {
+        padding-right: 0px;
+      }
+
+      #annotateDiv {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        z-index: 100;
+        opacity: .7;
+        display: none; 
+        text-align:right;
+      }
+      #annotate {
+        width: 350px; 
+        opacity:.8; 
+        margin-bottom:4px;
+        color: #000
+      }
+      #annotateBtn {
+        margin-right:2px;
+      }
+    </style>
+  </head>
+  <body><div id="alignmentOptions" style="display:none;">
+  <form class="alignmentOptions form form-inline" autocomplete="off">
+    <div id="exportOptions" style="padding-bottom:8px">
+      <b>Export Alignment</b>
+      <br>
+      <button type="button" class="btn btn-sm btn-default" onclick="$('#alignTbl'+$('#currentAlignmentIndex').val()).alignment('exportAlignment', {'format':'FASTA'});">FASTA format</button>
+      <button type="button" class="btn btn-sm btn-default" onclick="$('#alignTbl'+$('#currentAlignmentIndex').val()).alignment('exportAlignment', {'format':'ClustalW'});">Clustal Format</button>
+      <button type="button" class="btn btn-sm btn-default" onclick="$('.alTbl').first().alignment('html2image')">PNG Image</button>
+    </div>
+    <div>
+      <div id="ssOptions">
+        <b>Secondary Structure</b>
+        <br>
+        <label><input type="radio" name="sstype" id="secStruct_none" onclick="$('.alignTbl').alignment('secondaryStructure',{sstype:'none'})"  >None</label> 
+        <label><input type="radio" name="sstype" id="secStruct_dssp" onclick="$('.alignTbl').alignment('secondaryStructure',{sstype:'dssp'})" checked="checked" />DSSP</label>  
+        <label><input type="radio" name="sstype" id="secStruct_psipred" onclick="$('.alignTbl').alignment('secondaryStructure',{sstype:'psipred'})"  />PSIPRED</label>
+        <label><input type="radio" name="sstype" id="secStruct_sspro" onclick="$('.alignTbl').alignment('secondaryStructure',{sstype:'sspro'})"  />SSpro</label>   
+      </div>
+
+      <div id="colourOptions" style="padding-top:8px">
+        <b>Colour Scheme </b>
+        <a class="smng-help" href="/docs/help#colour_schemes"></a>
+        <div id="fadeMismatches">
+        <label class="inline checkbox" style="margin-right:12px;"><input type="checkbox" id="fadeMismatch_cb" onclick="$('.alignTbl').alignment('targetMismatch',{match:this.checked?'fade':null})" checked="checked" />Fade Mismatches</label>
+        <label class="inline checkbox"><input type="checkbox" id="enhanceMismatch_cb" onclick="$('.alignTbl').alignment('targetMismatch',{match:this.checked?'enhance':null})"  />Enhance Mismatches</label></div>
+        
+        
+
+        
+        <label class="confLabel"><input title="Per residue confidence colours" type="radio" name="csRadioGroup" id="qmean_localButton" value="qmean_local" checked="checked" />Confidence<sup>gradient</sup></label>
+        <label class="confLabel"><input title="Confidence classes" type="radio" name="csRadioGroup" id="confClassButton" value="confClass" checked="checked" />Confidence<sup>class</sup></label>
+        <label><input type="radio" name="csRadioGroup" id="indelsButton" value="indels"  />Indels</label>
+
+        <label><input type="radio" name="csRadioGroup" id="chainButton" value="chain" >Chain</label>
+        <label><input type="radio" name="csRadioGroup" id="uniqueChainButton" value="uniqueChain" >Unique Chain</label>
+        <label><input type="radio" name="csRadioGroup" id="rainbowButton" value="rainbow" checked="checked">Rainbow</label>
+        <label><input type="radio" name="csRadioGroup" id="secstrucButton" value="secstruc" checked="checked">2&deg; Structure</label>
+
+        
+
+        
+
+
+        
+        <label><input type="radio" name="csRadioGroup" id="clustalButton" value="clustal"  />Clustal</label>
+        <label><input type="radio" name="csRadioGroup" id="hydrophobicButton" value="hydrophobic"  />Hydrophobic</label>
+        <label><input type="radio" name="csRadioGroup" id="sizeButton" value="size"  />Size</label>
+        <label><input type="radio" name="csRadioGroup" id="chargedButton" value="charged"  />Charged</label>
+        <label><input type="radio" name="csRadioGroup" id="polarButton" value="polar"  />Polar</label>
+        <label><input type="radio" name="csRadioGroup" id="prolineButton" value="proline"  />Proline</label>
+        <label><input type="radio" name="csRadioGroup" id="serThrButton" value="serThr"  />Ser/Thr</label>
+        <label><input type="radio" name="csRadioGroup" id="cysButton" value="cysteine"  />Cysteine</label>      
+        <label><input type="radio" name="csRadioGroup" id="aliphaticButton" value="aliphatic"  />Aliphatic</label>
+        <label><input type="radio" name="csRadioGroup" id="aromaticButton" value="aromatic"  />Aromatic</label>
+        
+        <label><input type="radio" name="csRadioGroup" id="noColourButton" value="none"  />No Colour</label> 
+      </div>
+      
+      
+      <label class="checkbox" style="display: none" id="qmeanbraneLbl">
+        <input type="checkbox" id="qmeanbraneCB" onclick="toggleQMEANBrane($(this).prop('checked'))">Use QMEANBrane values
+      </label>
+
+      <table>
+        <tr>
+          <td><div style="margin-right:16px">Background</div></td>
+          <td><div style="height:16px; width:16px; border:1px solid #777;cursor:pointer;background-color:black" onclick="$('#bgColSlider').slider('value',0);"> </div></td>
+          <td style="width:220px"><div id="bgColSlider" style="margin:8px"></div></td>
+          <td><div style="height:16px; width:16px; border:1px solid #777;cursor:pointer;background-color:white" onclick="$('#bgColSlider').slider('value',255);"> </div></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="viewerSelect" style="padding-top:8px">
+      <b>3D Viewer</b><br>
+      <label><input type="radio" name="3dRG" value="NGL" checked="checked" />NGL</label>
+      <label><input type="radio" name="3dRG" value="PV"  />PV</label>
+    </div>
+  </form>
+  <div id="formattedAlignment" style="width:610px;height:470px;" class="fancy_box_swap">
+    <label class="checkbox-inline" >
+      <select style="height:28px;width:150px;" class="form-control" name="alignmentFormatSelect" id="alignmentFormatSelect" onchange="$('.alignTbl').first().alignment('changeExportFormat')">
+        <option value="FASTA" selected="selected">FASTA</option>
+        <option value="Multi FASTA">Multi FASTA</option>
+        <option value="ClustalW">ClustalW</option>
+      </select>
+    </label>
+    <button type="button" class="btn btn-sm btn-default" onclick="$('.alignTbl').first().alignment('html2image')">PNG</button>
+    <div align="center">
+      <textarea name="formattedAlignmentTextarea" id="formattedAlignmentTextarea" style="margin-top:8px;font-family:'Courier New', Courier, monospace; font-size:12px;width:100%;height:400px"></textarea>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="currentAlignmentIndex" value="">
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="margin-left:0px;padding:8px 4px 0px 0px;"
+                title="SIB Swiss Institute of Bioinformatics" 
+                href="https://www.sib.swiss" target="_blank"><img src="../web/images/sib_logo_small.png" alt="SIB logo" style="max-height:50px"></a>
+            <a class="hidden-xs hidden-sm navbar-brand" style="margin-left:0px; padding:8px 0px 0px 4px;"
+            title="Biozentrum | University of Basel | The Center for Molecular Life Sciences" 
+            href="http://www.biozentrum.unibas.ch/" target="_blank"><img src="../web/images/biozentrum_en.png" alt="Biozentrum logo" style="max-height:36px"></a>
+            <a class="navbar-brand" href="https://swissmodel.expasy.org" style="margin-left:0px;padding-left:0px;padding-right:0px;font-size:28px;">SWISS-MODEL</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="padding-left:15px">
+      <h3 style="display:inline-block;" id="title_ZkqgWs">mRFP
+      </h3>
+      <h3 style="display:inline-block; margin-left:8px;">
+        <small>Created: Nov. 8, 2022, 6:20 a.m. at 06:20</small>
+      </h3>
+    </div>
+      
+    
+    <div id="main-content">
+    
+
+
+<div id="flex-panel-container">
+  <div id="left-panel">
+    <div class="row" style="margin:10px 0">
+      
+
+      
+      <ul class="nav nav-pills" style="margin-bottom:0px; display: inline-block;">
+        <li><a href="templates.html">Templates (top 1000)</a></li>
+        
+        <li><a href="templates.txt">All templates</a></li>
+        <li class="active"><a href="models.html">Models </a></li>
+      </ul>
+      
+      <div style="font-size:.9em;" class="pull-right">
+        Order by:
+        <select class="form-control"  id="sortby" onchange="sortModels(this.options[this.selectedIndex].value)" style="display:inline;width:150px;margin-bottom:2px;">
+          <option value="gmqe">GMQE</option>
+          <option value="qmeanDisCo">QMEANDisCo</option>
+          <option value="oligo_state">Oligo State</option>
+          <option value="included_ligands">Ligands</option>
+          <option value="sequence_identity">Seq Identity</option>
+          <option value="sequence_similarity">Similarity</option>
+          <option value="coverage">Coverage</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="modelRangeContainer" style="border:1px solid #DDD; border-radius:10px; padding:8px; margin-bottom: 12px; display: none; position:relative">
+      <div id="model-range"></div>
+    </div>
+
+    
+
+    
+
+    <div id="modelSummaryTable"><script>const modelData = {};</script>
+      <div id="mdl_row_01">
+        
+          
+
+<div class="container-fluid" style="padding:0; ">
+  <div id="mdl_left_col_01" style="padding:5px;">
+
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+      <div style="flex-grow: 3; text-align: center">
+        <a href="#" onclick="if(selectedModels['01']){removeModel('01');}else{loadModel('01');}return false;"><img class="boxedImage" id="modelImage_01"
+         style="margin: 0px 16px 8px 0px; max-height:120px; max-width:120px; width:100%;"
+         src="models/01/01.png"></a>
+
+        <div class="btn-group-vertical">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Model 01
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" style="min-width:105px;" >
+              
+              <li><a href="models/01/model.pdb" target="_blank" tabindex="-1" role="menuitem"><i class="glyphicon glyphicon-file"></i> PDB Format <i>(Display)</i></a></li>
+              <li><a href="models/01/model.json" target="_blank" tabindex="-1" role="menuitem"><i class="glyphicon glyphicon-file"></i> JSON Format <i>(Display)</i></a></li>
+              <li><a href="report.html#model_01" target="_blank" tabindex="-1" role="menuitem"><i class="glyphicon glyphicon-file"></i> Model Report <i>(Display)</i></a></li>
+              
+            </ul>
+          </div>
+          
+           
+        </div>
+      </div>
+
+      <div style="flex-grow: 2;">
+        <dl class="dl-models">
+          <dt>
+            Oligo-State 
+            <a class="smng-help" href="/docs/help#oligo-state"></a>
+          </dt>
+          <dd>
+            Monomer<br>
+          </dd>
+
+          <dt title="Global Model Quality Estimate">
+            GMQE <a class="smng-help" href="/docs/help#GMQE"></a>
+          </dt>
+          <dd>
+            0.94
+          </dd>
+
+          <dt>
+            QMEANDisCo Global: <a class="smng-help" href="/docs/help#qmean"></a>
+          </dt>
+          <dd>
+           <span id="avgLocalScore_01">0.88</span> <span class="qmError"> &plusmn; 0.06</span> 
+          </dd>
+        </dl>
+      </div>
+    </div>
+
+    <dl class="dl-models">
+      
+      <dt style="display:none">
+        Ligands <a class="smng-help" href="/docs/help#ligand_modelling"></a>
+      </dt>
+      <dd style="display:none">
+        
+        <script>
+        
+"use strict";
+var plip_bonds = plip_bonds || null;
+var plip_residues = plip_residues || null
+var all_ligands = all_ligands || null
+var extra_residues_selection = extra_residues_selection || []
+var extra_ranges_selection = extra_ranges_selection || []
+function loadPLIPBonds_model_01() {
+    if (plip_bonds == null) {
+        plip_bonds = new PLIP.Bonds();
+    }
+    if (plip_residues == null) {
+        plip_residues = new PLIP.Residues();
+    }
+    if (all_ligands == null) {
+        all_ligands = new PLIP.Ligands();
+    }
+    
+    
+    
+    
+    
+    
+    
+}
+ window.addEventListener("DOMContentLoaded", function() {
+    loadPLIPBonds_model_01();
+ });
+
+var html = ``;
+
+        </script>
+        
+        <span id="showLigandContacts_01" title="Show Ligand Contacts" class="glyphicon glyphicon-chevron-down ignore-toggle-event" style="opacity:.7; margin-left:4px; cursor:pointer;" onclick="$('#ligandContacts_01').toggle();"></span>
+
+        
+      </dd>
+    </dl>
+
+    <div>
+      <small style="font-weight: bold">QMEANDisCo Local</small>
+      <div class="pull-right">
+        <span id="showQmeanLocal_01" class="glyphicon glyphicon-chevron-down" style="opacity:.7; cursor:pointer;" onclick="$('#quality_local_01').toggle(); drawQMEAN('01', true);"></span>
+      </div>
+    </div>
+    <div id="quality_local_01" style="display: none">
+      <a href="#lq-chart-01" rel="lq-01" class="fancybox">
+        <div id="lq-chart-01-thumb"></div>
+      </a>
+    </div>
+
+    <div>
+      <small style="font-weight: bold">QMEAN Z-Scores</small>
+      <div class="pull-right">
+        <span id="showQmeanGlobal_01" class="glyphicon glyphicon-chevron-down" style="opacity:.7; cursor:pointer;" onclick="$('#quality_global_01').toggle(); drawQMEAN('01', true);"></span>
+      </div>
+    </div>
+    <div class="row" id="quality_global_01" style="display:none">
+      <div class="col-sm-6">
+        <div style="max-width: 220px; margin: auto">
+          <table id="qmeanGlobalTbl01" style="font-size:.8em"></table>
+        </div>
+      </div>
+      <div class="col-sm-6 text-center">
+        <div style="max-width: 220px; margin: auto">
+          <a href="#qn-chart-01" class="fancybox">
+          <div id="qn-chart-01-thumb"></div></a>
+          <div id="qn-chart-01" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- End of Model details section -->
+
+    
+
+    <div style="margin-top:12px"><small style="font-weight: bold;">Template</small>
+      <div class="pull-right"><span class="glyphicon glyphicon-chevron-down" style="opacity:.7; cursor:pointer;" onclick="$('#templates_01_ceadc17b0146e25895428a184ddbc1a1b326655a').toggle();"></span></div>
+    </div>
+    <div style="display: flex; flex-direction: row;">
+      <div style="flex-grow: 3; overflow: auto;">
+        
+                  <a href="models/01/templates/2qli.1.A.pdb.gz" target="_blank">2qli.1.A</a>
+              </a>
+        Fluorescent protein plum<br><small>mPlum E16Q mutant</small>
+      </div>
+      <div style="flex-grow: 3;">
+        <dl class="dl-models">
+          <dt>
+            Seq Identity
+          </dt>
+          <dd>
+            93.72%
+          </dd>
+          <dt>
+            Coverage
+          </dt>
+          <dd>
+            <div template_count="1">
+                
+                <div id="range_01_0_0"
+                 seqlength="225"
+                 resFrom="6"
+                 resTo="222"
+                 seqSim="0.60"
+                 title="Model-Template: A 6-222"></div>
+              </div>
+          </dd>
+        </dl>
+      </div>
+
+    </div>
+
+
+    <div id="templates_01_ceadc17b0146e25895428a184ddbc1a1b326655a" style="overflow: auto; display:none;">
+      <table class="table noborder table-condensed" >
+        <tr>
+          <td width=200><small><b>Biounit Oligo State</b></small></td>
+          <td>Monomer</td>
+        </tr>
+        <tr>
+          <td><small><b>QSQE</b></small></td>
+          <td>0.00</td>
+        </tr>
+        <tr>
+          <td>
+            <small><b>Method</b></small>
+          </td>
+          <td>X-ray, 1.34 &Aring;</td>
+        </tr>
+        <tr>
+          <td><small><b>Seq Similarity</b></small></td>
+          <td>0.60</td>
+        </tr>
+        <tr>
+          <td><small><b>Coverage</b></small></td>
+          <td>0.99</td>
+        </tr>
+        <tr>
+          <td><small><b>Range</b></small></td>
+          <td>6-222</td>
+        </tr>
+        
+      </table>
+
+      
+
+      
+
+    </div><!-- end templates_01_ceadc17b0146e25895428a184ddbc1a1b326655a -->
+    
+
+
+    <div style="font-weight:bold; "><small>Model-Template Alignment</small> <span id="showAlignment_01" class="glyphicon glyphicon-chevron-down pull-right" style="opacity:.7; cursor:pointer;"></span></div>
+  </div> <!-- end of templates_modelid_uniqueid -->
+
+</div>
+
+
+<div id="alignment_01_A" style="display:none; margin-bottom:12px">
+<table cellpadding="0" cellspacing="0" class="alignTblContainer">
+    <tr>
+        <td valign="top">
+            <div class="hidden-print">
+                <a id="options_01_A" class="poponthis glyphicon glyphicon-cog" style="color:#333;opacity:.7;margin-right:2px"></a> 
+            </div>
+        </td>
+        <td valign="top">
+            <table class="alignNameTbl" id="alignNameTbl01_A" border="0" cellspacing="0" cellpadding="0"></table>
+        </td>
+        <td valign="top">
+            <table class="alignTbl" id="alignTbl01_A" cols_cookie="mdl_cols" border="0" cellspacing="0" cellpadding="0" ></table>
+            <div id="alignTbl01_A_features" style="z-index:-1; position: absolute;"></div>
+        </td>
+    </tr>
+</table><div id="offscreen_selection" style="position:absolute; top:-5000px;"></div>
+
+</div>
+
+
+<script>
+  modelData['01'] = {"model_id":"01","status":"COMPLETED","json_version":"0.1","sequence_similarity":0.6020922660827637,"sequence_identity":93.72196960449219,"coverage":0.9911110997200012,"major_issues":null,"built_with":"ProMod3 3.2.1","smtl_version":"2022-11-07","pdb_release":"2022-10-21","targets":[{"model_chains":[{"psipred":"CCCCCCCCCCCCEEEEEEEEEECCEEEEEEEEEEECCCCCEEEEEEEEECCCCCCCCHHHHHHHCCCCCEEEECCCCCCCHHHHHCCCCCCEEEEEEEEECCEEEEEEEEEEEECCEEEEEEEEEEECCCCCCCCCCCCCCCCCCCEEEEECCCCEEEEEEEEEEEECCCCEEEEEEEEEEECCCCCCCCCCEEEEEEEEEEEECCCCCEEEEEEEEEEEECCCC","dssp":"-----CCSCSSEEEEEEEEEEETTEEEEEEEEEEEETTTTEEEEEEEEEESCSCSSCGGGTTTTTHHHHGGGCBCCTTSCCHHHHTTTTCEEEEEEEEETTSCEEEEEEEEEEETTEEEEEEEEEEECCCTTSTTTTTCEEEECCEEEEEEEETTEEEEEEEEEEEETTSCEEEEEEEEEEEESSCCCCCCSEEEEEEEEEEEECTTSSEEEEEEEEEEECC","qmean":[null,null,null,null,null,0.73,0.85,0.87,0.82,0.82,0.86,0.87,0.85,0.9,0.84,0.87,0.82,0.86,0.86,0.9,0.91,0.92,0.89,0.89,0.89,0.88,0.91,0.87,0.89,0.84,0.88,0.83,0.89,0.85,0.9,0.85,0.92,0.9,0.89,0.93,0.92,0.88,0.89,0.89,0.83,0.86,0.84,0.89,0.88,0.86,0.89,0.91,0.92,0.93,0.95,0.94,0.96,0.92,0.94,0.95,0.94,0.94,0.95,0.9,0.54,0.5,0.43,0.58,0.94,0.88,0.95,0.92,0.94,0.89,0.89,0.87,0.83,0.83,0.89,0.92,0.92,0.91,0.91,0.9,0.91,0.92,0.91,0.89,0.84,0.93,0.89,0.88,0.88,0.86,0.84,0.88,0.88,0.9,0.92,0.89,0.91,0.93,0.92,0.9,0.9,0.89,0.89,0.89,0.85,0.9,0.92,0.89,0.88,0.79,0.79,0.86,0.84,0.9,0.89,0.91,0.86,0.84,0.86,0.9,0.85,0.91,0.88,0.88,0.91,0.92,0.86,0.88,0.91,0.94,0.95,0.91,0.87,0.9,0.89,0.92,0.9,0.95,0.91,0.87,0.9,0.85,0.87,0.85,0.84,0.89,0.9,0.9,0.86,0.85,0.87,0.89,0.91,0.89,0.92,0.85,0.86,0.85,0.87,0.85,0.93,0.89,0.91,0.85,0.83,0.87,0.91,0.91,0.93,0.92,0.94,0.88,0.91,0.88,0.9,0.89,0.86,0.86,0.89,0.86,0.84,0.83,0.87,0.84,0.89,0.92,0.91,0.91,0.89,0.86,0.89,0.88,0.88,0.86,0.9,0.9,0.89,0.89,0.87,0.85,0.83,0.77,0.84,0.89,0.89,0.87,0.88,0.85,0.85,0.9,0.87,0.84,0.93,0.88,0.91,0.82,0.8,0.79,null,null,null],"id":"A","templates":[{"id":"ceadc17b0146e25895428a184ddbc1a1b326655a","pdb_id":"2qli","chain":"A","method":"X-RAY DIFFRACTION","short_method":"X-ray","coverage":0.9911110997200012,"resolution":1.3399999141693115,"description":"Fluorescent protein plum","assembly_id":1,"score":2.1420202255249023,"found_by":"BLAST","oligo_state":"monomer","comment":"e_value=4.60127e-143, bit_score=404.445, score=1038, gmqe_dist_const=0.9492347836494446, gmqe_reduced=-0.08367624133825302, gmqe_cb_packing=-0.15488450229167938, gmqe_torsion=-0.4139556586742401, gmqe_ss_agreement=0.8995002508163452, gmqe_coverage=0.9511111378669739, gmqe_seq_id=95.34883880615234, gmqe_seq_sim=0.6089922785758972, gmqe_n_insertions=1, gmqe_n_deletions=0, gmqe_seqres_length=225, gmqe_seqres_coverage=0.9911111111111112, gmqe_profile_aln_score=578.7022705078125, gmqe_avg_entropy=1.640554428100586","offset":1,"oligo_state_bu":"monomer","oligo_state_bu_full":"monomer","is_whole_complex":"whole_complex","qualified_name":"2qli.1.A","biounit_name":"2qli.1","gmqe":0.9867529273033142,"sequence_identity":93.72196960449219,"sequence_similarity":0.6020922660827637,"alignment":{"target_sequence":"MASSEDVIKEFMRFKVRMEGSVNGHEFEIEGEGEGRPYEGTQTAKLKVTKGGPLPFAWDILSPQFQYGSKAYVKHPADIPDYLKLSFPEGFKWERVMNFEDGGVVTVTQDSSLQDGEFIYKVKLRGTNFPSDGPVMQKKTMGWEASTERMYPEDGALKGEIKMRLKLKDGGHYDAEVKTTYMAKKPVQLPGAYKTDIKLDITSHNEDYTIVEQYERAEGRHSTGA","template_sequence":"VSKGEEVIKEFMRFKQHMEGSVNGHEFEIEGEGEGRPYEGTQTARLKVTKGGPLPFAWDILSPQIX--SKAYVKHPADIPDYLKLSFPEGFKWERVMNFEDGGVVTVTQDSSLQDGEFIYKVKVRGTNFPSDGPVMQKKTMGWEASSERMYPEDGALKGEMKMRLRLKDGGHYDAEVKTTYMAKKPVQLPGAYKTDIKLDITSHNEDYTIVEQYERAEGRHSTGA"},"annotation":{"dssp":"XXXXXXCCSCSSEEEEEEEEEEETTEEEEEEEEEEEETTTTEEEEEEEEEESCSCSSCGGGTGGGCCCTTSCBCCTTSCCHHHHTTTTCEEEEEEEEETTSCEEEEEEEEEEETTEEEEEEEEEEECCCTTSTTTTTCEEEECCEEEEEEEETTEEEEEEEEEEEETTSCEEEEEEEEEEEESSCCCCCCSEEEEEEEEEEEECTTSSEEEEEEEEEEECCXXX","psipred":"CCCCCCCCCCCCCEEEEEEEEEECCEEEEEEEEEEECCCCCEEEEEEEEECCCCCCCCCCCCCCCCCCCCCCCCCCCCCCHHHHCCCCCCEEEEEEEEECCEEEEEEEEEEEECCEEEEEEEEEEECCCCCCCEECCCCCCCCCCEEEEECCCCEEEEEEEEEEEECCCCEEEEEEEEEEECCCCCCCCCCEEEEEEEEEEEECCCCCEEEEEEEEEEEECCCC","sspro":"CCECCCEHECCCEEEEEEEEEEECCEEEEEEECCCCCCCCCCEEEEEEEECCCCCCCCCHCCHHHHHHHHHCCCCCCCCCCCCCCCCCCCCHHHHCCCCCCEEEEEEEEEECCCEEEEEEEEEECCCCEEECEEEEECCCCCCCCCCCCCCCCCCCCCCCEEECCCCCCCCCHHCCCCEEEEECCCCCCCCECCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"},"title":"mPlum E16Q mutant","residue_from":"6","residue_to":"222","trg_seq_length":225}],"residue_from":"6","residue_to":"222"}],"id":"A","target_sequence":"MASSEDVIKEFMRFKVRMEGSVNGHEFEIEGEGEGRPYEGTQTAKLKVTKGGPLPFAWDILSPQFQYGSKAYVKHPADIPDYLKLSFPEGFKWERVMNFEDGGVVTVTQDSSLQDGEFIYKVKLRGTNFPSDGPVMQKKTMGWEASTERMYPEDGALKGEIKMRLKLKDGGHYDAEVKTTYMAKKPVQLPGAYKTDIKLDITSHNEDYTIVEQYERAEGRHSTGA"}],"qsqe":0.0,"oligo_state":"monomer","oligo_based_on":"prediction","gmqe":0.9449760701645757,"qmean_global":{"qmean4_norm_score":0.7909929812162573,"qmean4_z_score":0.28923063407036864,"qmean6_norm_score":0.7984204006590584,"qmean6_z_score":0.36484504423307174,"interaction_norm_score":-0.027888524196745586,"interaction_z_score":0.5849848512016573,"cbeta_norm_score":-0.01248336375558487,"cbeta_z_score":-0.23617609125236602,"packing_norm_score":-0.39679873873016147,"packing_z_score":0.3861202072893822,"torsion_norm_score":-0.35401651874554074,"torsion_z_score":0.17486084095957882,"ss_agreement_norm_score":0.8574817726208318,"ss_agreement_z_score":1.506867371657191,"acc_agreement_norm_score":0.5944700460829493,"acc_agreement_z_score":-0.7765501406754506,"avg_local_score":0.8768092810741435,"avg_local_score_error":0.058},"included_ligands":[],"excluded_ligands":[],"plip_ligands":{}}
+  if(modelData['01'].targets[0].model_chains[0].qmeanbrane)
+    document.getElementById('qmeanbraneLbl').style.display='inline';
+
+</script>
+        </div>
+        
+    </div>
+  </div>
+
+  <div id="right-panel">
+    <div id="viewerWrapper" style="border: 1px solid #DDD; border-radius: 10px; padding:7px; margin-bottom:4px; height:300px; width:100%; position:relative; text-align:center">
+      <div style="position:absolute; right:10px; top:10px; z-index:100;">
+        <div id="pv_status" class="viewerStatus"></div>
+        <div id="ngl_status" class="viewerStatus"></div>
+      </div>
+
+      <div id="annotateDiv">
+        <textarea id="annotate" rows=5 class="form-control" placeholder='MOTIF=YAN TARGET=1 COLOR=rgb(0,100,100)
+MOTIF=P COLOR=gold LABEL="prolines labelled gold"
+CHAIN=A START=34 END=38 COLOR=#440088 LABEL=default' spellcheck="false" style="white-space: pre;"></textarea> 
+        <span style="float: left; margin-left: 8px;">
+         <a class="smng-help" href="/docs/help#model-annotation"></a>
+        </span>
+        <button id="applyBtn" class="btn btn-sm" onclick="processAnnotations();" style="margin-right:8px;" disable="disabled">
+          Apply
+        </button>
+
+        <button class="btn btn-sm" onclick="$('#annotateDiv').hide();">
+          Close
+        </button>         
+      </div>
+
+      <div style="position:absolute; bottom:10px; right:10px; z-index: 10;">
+        <div class="dropup pull-left">
+          <button title="Annotate Models" id="annotateBtn" class="btn btn-sm btn-default" onclick="$('#annotateDiv').toggle(); if($('#annotateDiv:visible').length==1)processAnnotations();"><i class="glyphicon glyphicon-pencil"></i></button>
+          <a id="options_" class="poponthis btn btn-sm btn-default">
+            <i class="glyphicon glyphicon-cog"></i>
+          </a>
+          <button class="btn btn-sm btn-default" data-toggle="dropdown"><span style="margin-right:4px" id="repBtnLbl">Cartoon</span><b class="caret"></b></button>
+          <ul role="menu" class="dropdown-menu" style="min-width:10px">
+            <li><a href="#" onclick="changeRep('cartoon');return false;">Cartoon</a></li>
+            <li><a href="#" onclick="changeRep('tube');return false;">Tube</a></li>
+            <li><a href="#" onclick="changeRep('trace');return false;">Trace</a></li>
+            <li><a href="#" onclick="changeRep('lines');return false;">Lines</a></li>
+
+            <li class="notPV"><a href="#" onclick="changeRep('ballAndStick');return false;">Ball+Stick</a></li>
+            <li class="notPV"><a href="#" onclick="changeRep('licorice');return false;">Licorice</a></li>
+            <li class="notPV"><a href="#" onclick="changeRep('hyperball');return false;">Hyperball</a></li>
+            <li class="notPV"><a href="#" onclick="changeRep('rope');return false;">Rope</a></li>
+            <li class="notPV"><a href="#" onclick="changeRep('surface');return false;">Surface</a></li>
+            <li class="notPV"><a href="#" onclick="changeRep('spacefill');return false;">Spacefill</a></li>
+            <li role="separator" class="notNGL divider"></li>
+            <li class="notNGL"><a href="#" onclick="changeRep('outline');return false;">Outline</a></li>
+            <li class="notNGL"><a href="#" onclick="changeRep('fog');return false;">Fog</a></li>
+          </ul>
+        </div>
+        <div class="dropup pull-left notPV">
+  <button class="btn btn-sm btn-default" title="Take Snapshot of 3D Molecule" data-toggle="dropdown"><span class="glyphicon glyphicon-camera" style="margin-right:4px"></span><b class="caret"></b></button>
+    <ul role="menu" class="dropdown-menu" style="min-width:10px">
+      <h6 class="dropdown-header">Background</h6>
+      <li><label style="padding-left: 20px; padding-right: 20px; white-space: nowrap; font-weight: normal;" onclick="event.stopPropagation();"
+                 title="Export snapshot with a transparent background"><input type="checkbox"
+                 id="snapshot_bg_transparent_checkbox" checked="checked">&nbsp;Transparent</label></li>
+      <h6 class="dropdown-header">Resolution</h6>
+      <li><a href="#" onclick="takeSnapshot('.png', 1);return false;">Low</a></li>
+      <li><a href="#" onclick="takeSnapshot('.png', 2);return false;">Medium</a></li>
+      <li><a href="#" onclick="takeSnapshot('.png', 4);return false;">High</a></li>
+      <li><a href="#" onclick="takeSnapshot('.png', 10);return false;">Extreme</a></li>
+    </ul>
+</div>
+<button class="btn btn-sm btn-default notNGL" title="Take Snapshot of 3D Molecule" onclick="takeSnapshot('.png');return false;"><i class="glyphicon glyphicon-camera"></i></button>
+
+        <button class="btn btn-sm btn-default spinButton" title="Start rotation" onclick="spin(true);$('.spinButton').toggle();"><i class="glyphicon glyphicon-play"></i></button>
+        <button class="btn btn-sm btn-default spinButton" style="display:none" title="Stop rotation" onclick="spin(false);$('.spinButton').toggle();"><i class="glyphicon glyphicon-pause"></i></button>
+        <button class="btn btn-sm btn-default" title="Reset" onclick="resetStructure();"><i class="glyphicon glyphicon-refresh"></i></button>
+      </div>
+
+      <div id="pv"  style="display:none;width:100%;height:100%;position:relative;">
+        <h5 class="emptySelectionMessage" style="padding-top:150px;">Click model image to view in 3D</h5>
+      </div>
+      <div id="ngl" style="display:none;width:100%;height:100%;position:relative;">
+        <h5 class="emptySelectionMessage" style="padding-top:150px;">Click model image to view in 3D</h5>
+      </div>
+    </div><!-- end viewerWrapper -->
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div id="delModelDiv" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Delete Model - "<span id="delModelDivLabel"></span>"</h3>
+      </div>
+      <div class="modal-body">
+       <p>Are you sure you want to delete this model?<br>(This really can't be undone!)</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-danger" id="confirmDeleteModelButton" >Delete Model</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+    
+  </body>
+</html> 
+
+<script src="../web/js/jquery-3.6.0.min.js"></script>
+<script src="../web/js/jquery-ui.min.js"></script>
+<script src="../web/js/bootstrap-3.4.1.min.js"></script>
+<script src="../web/js/bio-pv.min.js"></script>
+<script src="../web/js/ngl.js"></script>
+<script src="../web/js/raphael-min.js"></script>
+<script src="../web/js/alignment.min.js"></script>
+<script src="../web/js/structure.min.js"></script>
+<script src="../web/js/qmean.min.js"></script>
+<script src="../web/js/svgtocanvas.min.js"></script>
+<script src="../web/js/jquery.fancybox.pack.js"></script> 
+
+
+
+
+<script src="models/01/coords.js"></script>
+<script>
+let localQMEANNormImage='../web/images/qmean_norm.png';
+$('a.smng-help').append('<icon class="glyphicon glyphicon-question-sign"></i>');
+    $(document).on('click','a.smng-help', function()
+    { 
+        window.open('https://swissmodel.expasy.org/'+$(this).attr('href'),
+            'Help',
+            'width=920,height=600,left=20,top=100,directories=no,menubar=yes,toolbar=yes,'
+                +'status=no,scrollbars=yes,resizable=no');
+        return false;
+    });
+</script>
+
+<script>
+var None = null;
+var tooltipWhiteList = $.fn.tooltip.Constructor.DEFAULTS.whiteList
+
+// To allow table elements
+tooltipWhiteList.table = [];
+tooltipWhiteList.tbody = [];
+tooltipWhiteList.tr = [];
+tooltipWhiteList.td = ['rowspan'];
+tooltipWhiteList.img = ['src','style']
+
+$(document).ready(
+    function()
+    {
+      $('span[id^=avgLocalScore]')
+        .each(function(){
+          $(this).css({'background-color':
+                         qmeanLocalColour(modelData[
+                          $(this).attr('id').substring(14)
+                         ].qmean_global.avg_local_score, .9),
+                    'padding':'0px 8px 0px 8px',
+                    'color':'white',
+                    'border-radius':'1em',               
+                    'display':'inline-block'});
+          });
+
+      $('div[id^=range_]').each(
+          function()
+          {
+            drawRange($(this).attr('id'),
+                $(this).attr('seqLength'),
+                $(this).attr('resFrom'),
+                $(this).attr('resTo'),
+                $(this).attr('seqSim'));
+          });
+
+      $("#model-range")
+        .popover({
+          html : true,
+          animation: false,
+          selector: 'rect[id^=mdl_bar]',
+          content: function()
+                {
+                    let id = $(this).attr("id").split('_')[2];
+                    let trg = parseInt($(this).attr("id").split('_')[3]);
+                    let model = modelData[id];
+                    let ligSummary = '';
+                    for(let i=0; i<model.included_ligands.length; i++)
+                      ligSummary+=model.included_ligands[i].count
+                                +' x '+model.included_ligands[i].name+'; ';
+                    if(ligSummary!='')
+                      ligSummary = '<tr><td>Ligands: '+ligSummary+'</td></tr>'
+
+                    let imgSrc = `models/${id}/${id}.png`;
+                    
+                    let tip = `<table><tr><td rowspan="6"><img src="${imgSrc}" style="margin-right:16px;border:1px solid ${selectedModels[id]?'#F66':'#EEE'};border-radius:10px;height:100px"></td><td>Model ${id}</td></tr>`
+                    +`<tr><td>Oligo-state: ${model.oligo_state.charAt(0).toUpperCase()}${model.oligo_state.substring(1)}</td></tr>`
+                    +`<tr><td>Range: ${model.targets[trg].model_chains[0].residue_from}-${model.targets[trg].model_chains[0].residue_to} (Chain${model.targets[trg].id.length>1?'s':''} ${model.targets[trg].id})</td></tr>`
+                    +`<tr><td>GMQE: ${model.gmqe.toFixed(2)}</td></tr>`
+                    +`<tr><td>QMEANDisCo: ${model.qmean_global.avg_local_score.toFixed(2)}</td></tr>${ligSummary}</td></tr>`
+
+                    return tip;
+                },
+          placement: 'right',
+          container: 'body',
+          trigger: 'hover',
+          delay: { "show":550, "hide": 300 }
+        })
+        .on('shown.bs.popover', function(e)
+        {
+            let pop = $('#'+$(e.target).attr('aria-describedby'));
+            pop.css({'left': $(e.target).offset().left+$(e.target).outerWidth()+4,  
+                            //$(this).data('posX')+15,
+                     'top':  $(e.target).offset().top
+                            - pop.outerHeight()/2
+                            + $(e.target).outerHeight()/2});
+            pop.find('.arrow').css({'top': '50%'})
+            
+            $(".popover").not(pop).hide();
+        })
+        .on('mousemove', function(e)
+        {
+          $(this).data('posX', e.pageX);
+        });
+
+      addToggleEvent();
+      showViewer("NGL");
+
+    
+
+      loadModel('01');
+      $('#showQmeanLocal_01').click();
+      if($('#mdl_row_01').offset().top > $(window).scrollTop()+$(window).height())
+        $('html,body').animate({'scrollTop':$('#mdl_row_01').offset().top }, 2000);
+
+      
+
+      $('.ligand_summary')
+      .popover(
+        {
+          'trigger':'hover',
+          'delay': { 'show': 1000, 'hide': 100 },
+          'html':true,
+          'container':'body',
+          'content': function()
+          {
+              let html='';
+              let ligs = $(this).attr('ligand_name').split('-');
+              for(let i=0; i<ligs.length; i++)
+                html+='<img style="display:inline-block;min-width:135px;min-height:135px;max-width:135px;max-height:135px" width="135" height="135" src="https://cdn.rcsb.or'+''//small obfuscation
+                  +'g/images/ccd/unlabeled/'+ligs[i][0]+'/'+ligs[i]+'.svg">';
+              return html;
+          }
+        });
+
+      $('button[id^=issueButton_]')
+        .popover({ html:true, container: 'body'  });
+    });
+
+$(window).on('resize',
+  function(e){
+    clearTimeout(this.id);
+    this.id = setTimeout(function()
+    {
+      resize(e);
+    }, 250);
+  });
+
+$(document).on('scroll', 
+  function(e){
+    clearTimeout(this.id);
+    this.id = setTimeout(function()
+    {
+      resize(e);
+    }, 250);
+  });
+
+function resize(e)
+{
+  if($(window).width()<751)
+  {
+    $('#right-panel').css({position:'relative',left:'',top:'',width:''});
+    $('#viewerWrapper').height( $('#viewerWrapper').width() );
+    $('#left-panel').css({width:''})
+  }
+  else
+  {
+    let setFixed = false;
+    let setRelative = false;
+    if($('#right-panel').css('position')!='fixed')
+    {
+      if($(document).scrollTop()>$('#left-panel').position().top-8) 
+        setFixed = true;
+      else
+        setRelative = true;
+    }
+    else
+    {
+      if($(document).scrollTop()<$('#left-panel').position().top-8) 
+        setRelative = true;
+      else
+        setFixed = true;
+    }
+    if(setFixed)
+    {
+      $('#right-panel').css(
+          { position:'fixed', top:'8px', left: $('#left-panel').width() +32,
+            width: $('#main-content').innerWidth() -$('#left-panel').width() -48
+          });
+      $('#viewerWrapper').height(window.innerHeight -$('#viewerWrapper').position().top -50  );    
+    }
+    else if(setRelative)
+    {
+      $('#right-panel').css({position:'relative','left':'',top:'',width:''});
+      $('#viewerWrapper').height(
+        window.innerHeight
+        -$('#right-panel').position().top
+        -$('#viewerWrapper').position().top 
+        +$(document).scrollTop() -32);
+    }
+  }
+
+  $('#annotate')
+    .height( $('#viewerWrapper').height()/4 )
+    .width( $('#viewerWrapper').width()-30 );
+
+  $('#pv').height( $('#viewerWrapper').height() );
+  if($('#pv:visible', currentWin.document).length>0)
+    pv_viewer.fitParent();
+  else if(ngl_stage)
+    ngl_stage.handleResize();
+
+
+  if(!e || e.type=='resize')
+  {
+    $('.alignTbl').alignment('resizeToParent'); 
+    drawModelCoverage();
+    $('div[id^="lq-chart"]:visible')
+      .each(function()
+      { 
+        drawQMEAN($(this).attr('id').split('-')[2], true); 
+      });
+  }
+}
+
+let resizeBarTouch;
+$("#left-panel").resizable({  handles: 'e', 'stop': function() { } }); 
+$('.ui-resizable-e')[0]
+  .addEventListener('touchstart', (e) => 
+  {
+    const onTouchMove = (e) => 
+    { 
+      e.preventDefault();
+      if(e.touches.length==1)
+      {
+        if(Math.abs(e.touches[0].pageX-resizeBarTouch.x))
+        {
+          $('#left-panel').width( $('#left-panel').width()+e.touches[0].pageX-resizeBarTouch.x );
+          resizeBarTouch.x = e.touches[0].pageX;
+        }
+        return;
+      }
+    }
+    const onTouchEnd = () => {
+      e.target.removeEventListener("touchmove", onTouchMove);
+      e.target.removeEventListener("touchend", onTouchEnd);
+      // handle touchend here
+      resizeBarTouch = null;
+      this.id = setTimeout(function()
+      {
+        resize();
+      }, 250);
+    }
+    e.target.addEventListener("touchmove", onTouchMove);
+    e.target.addEventListener("touchend", onTouchEnd);
+    // handle touchstart here
+    if(e.touches.length==1)
+      resizeBarTouch = { x: e.touches[0].pageX  };
+  });
+
+
+
+function jobFinished(status,model_id)
+{  
+  $('#autoModelIcon').hide();
+  $('.ligand_summary').popover(
+    {
+      'trigger':'hover',
+      'delay': { 'show': 1000, 'hide': 100 },
+      'html':true,
+      'container':'body',
+      'content': function()
+      {
+          var html='';
+          var ligs = $(this).attr('ligand_name').split('-');
+          for(var i=0; i<ligs.length; i++)
+            html+='<img style="display:inline-block;min-width:135px;min-height:135px;max-width:135px;max-height:135px"  width="135" height="135" src="https://cdn.rcsb.or'+''//small obfuscation
+                  +'g/images/ccd/unlabeled/'+ligs[i][0]+'/'+ligs[i]+'.svg">';
+          return html;
+      }
+    });
+
+  $('button[id^=issueButton_'+model_id+']')
+        .popover({ html:true, container: 'body' });
+
+  $('a[id^=options_'+model_id+']')
+      .popover(
+        { 
+            html : true,
+            content: $('#alignmentOptions'),
+            container: 'body'
+        })
+      .click(function()
+        {
+          $('#alignmentOptions').show()
+          $('#currentAlignmentIndex').val( $(this).attr('id').substring(8) );
+        })
+
+
+  if(status=='COMPLETED')
+  { 
+      addToggleEvent(model_id);
+      if(Object.keys(selectedModels).length==0)
+        loadModel(model_id);
+
+      $('#avgLocalScore_'+model_id)
+          .css({'background-color':  qmeanLocalColour(
+              modelData[model_id].qmean_global.avg_local_score, .9),
+                'padding':'0px 8px 0px 8px',
+                'color':'white',
+                'border-radius':'1em',
+                'display':'inline-block'});
+      $('div[id^=range_'+model_id+']').each(
+          function()
+          {
+            drawRange($(this).attr('id'),
+                $(this).attr('seqLength'),
+                $(this).attr('resFrom'),
+                $(this).attr('resTo'),
+                $(this).attr('seqSim'));
+          });
+      drawModelCoverage();
+      // Load the PLIP data
+      eval("loadPLIPBonds_model_" + model_id + "()");
+  }
+  else
+  {
+    var allFailed = true;
+    $('#modelSummaryTable div[id^=mdl_left_col_]').each(
+        function()
+        {
+          if( $(this).text().indexOf('failed')==-1)
+          {
+            allFailed = false;
+            return;
+          }
+        });
+    
+    if(allFailed)
+    {
+      alert('All jobs failed!');
+    }
+  }
+}
+
+function addToggleEvent(model_id)
+{
+  var $elements;
+  if(model_id)
+    $elements = $('#mdl_row_'+model_id+' .glyphicon-chevron-down').not(".ignore-toggle-event");
+  else
+    $elements = $('.glyphicon-chevron-down').not(".ignore-toggle-event");
+
+  $elements.on('click', function() 
+      {
+        var curTarget = $(this).attr('id');
+        var model_id = null;
+        if(curTarget && curTarget.indexOf('showAlignment_')==0)
+          model_id = curTarget.substring(14);
+        
+        if(model_id)
+          $('div[id^=alignment_' + model_id + ']').toggle();
+
+        if( $(this).hasClass('glyphicon-chevron-down'))
+        {
+          $(this)
+            .removeClass('glyphicon-chevron-down')
+            .addClass('glyphicon-chevron-up');
+          
+          if(model_id)
+          {
+            loadAlignment(model_id);
+            $('.alignTbl').alignment('resizeToParent');
+          }
+        }
+        else
+        {
+          $(this)
+            .addClass('glyphicon-chevron-down')
+            .removeClass('glyphicon-chevron-up');
+        }
+   });
+}
+
+function drawRange(id, seqLength, from, to, value)
+{
+  let maxLength = seqLength;
+
+  $('div[id^='+id.split('_').slice(0,2).join('_')+']')
+    .each(function(i, obj)
+      {
+        maxLength = Math.max(maxLength, obj.getAttribute('seqLength'));
+      });
+  
+  let width=80 * (seqLength/maxLength);
+  let height=16;
+  let scale = width / seqLength;
+  let pat = new RegExp('[a-zA-Z]+','gi');
+
+  let coveragePaper = Raphael(id,width,height); 
+  
+  let r = coveragePaper.rect(1,1,width-2,height-1)
+  r.attr({'stroke-width':1,stroke:'#000',opacity:.3})
+  
+  r = coveragePaper.rect(scale*from,1,scale*(to-from),height-1)
+  r.attr({'stroke-width':1,
+              fill: "rgba(30, 90, 255,"+(value+.4)+")", 
+                  stroke: "#EEE",
+                  //opacity: .7,
+                  r : 2
+                  })
+}
+
+
+function confirmDeleteModel(id)
+{
+  $('#delModelDivLabel').text(id);
+  $('#delModelDiv')
+    .modal('show')
+    .off('shown.bs.modal')
+    .on('shown.bs.modal',
+    function()
+    {
+      $('#confirmDeleteModelButton')
+        .focus()
+        .off('click')
+        .on('click',function()
+          {
+            $.post("/interactive/ZkqgWs/models/00/delete".replace('00',id),
+              { 
+                csrfmiddlewaretoken:'bi3tZmbErCAekqW83el5QkdaeWfcsio5lmAqUuXx2g8lOJHPgnZuaN2PlvRCx0E3' 
+              },
+              function(d,s)
+              {          
+                if(s=='success' && d=='removed')
+                {
+                  delete modelData[id];
+                  if(Object.keys(modelData).length==0)
+                    $('#modelRangeContainer').hide();
+
+                  removeModel(id);
+                  $('#mdl_row_'+id).remove();
+                  $('#model_badge').text( $('div [id^=mdl_row]').length );
+                  drawModelCoverage();
+                }
+              });
+            $('#delModelDiv').modal('hide');  
+          });
+    
+    });
+}
+
+
+chainMapping.defaultColourScheme = 'qmean_local';
+function loadAlignment(id)
+{
+  if( $('.alignTbl[id^=alignTbl'+id+'] tr').length==0)
+  {
+    for(let i=0; i<modelData[id]['targets'].length; i++)
+    {
+      let chn_ids = [];
+      let tpls = [];
+      let ksa = {}; //key seq annotation
+      for(let j=0; j<modelData[id]['targets'][i]['model_chains'].length; j++)
+      {
+        let mdlChn = modelData[id]['targets'][i]['model_chains'][j];
+        ksa[mdlChn.id] = {}
+        chn_ids.push(mdlChn.id)
+        
+        if(j==0)
+          tpls = tpls.concat(mdlChn['templates']);
+
+        if('dssp' in mdlChn)
+          ksa[mdlChn.id]['dssp']  = mdlChn['dssp'];
+        if('psipred' in mdlChn)
+          ksa[mdlChn.id]['psipred'] = mdlChn['psipred'];
+        if('qmeanbrane' in mdlChn)
+          ksa[mdlChn.id]['qmeanbrane'] = mdlChn['qmeanbrane'];
+        if('qmean' in mdlChn)
+          ksa[mdlChn.id]['qmean'] = mdlChn['qmean'];
+      }
+      for(let x=0; x<tpls.length; x++)
+      {
+        if(!tpls[x].qualified_name)
+          continue;
+        tpls[x]['struc_id'] = 'model_'+id
+        tpls[x]['selected'] = true
+        tpls[x]['qname'] = tpls[x].qualified_name
+        tpls[x]['trg_seq'] = tpls[x]['alignment']['target_sequence'];
+        tpls[x]['tpl_seq'] = tpls[x]['alignment']['template_sequence'];
+        delete tpls[x].id;
+        delete tpls[x].qualified_name;
+        delete tpls[x].alignment;
+      }
+      let data = {
+            'templateData':{
+                 'type':'model-template',
+                 'struc_id':'model_'+id,
+                 'templates':tpls,
+                 'modelLabel':'Model '+id    
+              }, 
+             'keyseq_chain_name':chn_ids,
+             'keyseq_annotation':ksa,
+             'cols':50
+            };
+
+      let chaingroups = chn_ids;
+
+      $('#alignTbl'+id+(modelData[id]['targets'][i]['id']?
+                        '_'+modelData[id]['targets'][i]['id']:''))
+       .alignment(data)
+       .alignment('toggleIdenticalSeqs',{'chaingroups':[chaingroups]});
+    }
+    if(chainMapping.defaultColourScheme=='features')
+      processAnnotations();
+  }
+}
+
+let membraneData = {};
+function showMdlMembrane(id, show)
+{
+  if(modelData[id].membrane)
+  {
+    membraneData['model_'+id] = modelData[id].membrane;
+    if(!show)
+      showMembrane('model_'+id, false);
+    else if(show && selectedModels[id] && $('#membraneCB_'+id+':checked').length==1)
+      showMembrane('model_'+id, true);
+  }
+}
+
+let qmeanbraneActive = false;
+function toggleQMEANBrane(show)
+{
+  qmeanbraneActive=show;
+
+  for(let i=0; i<chainMapping.annotations.length; i++)
+    if(chainMapping.annotations[i].key=='qm')
+      chainMapping.annotations[i].active = !qmeanbraneActive;
+    else if(chainMapping.annotations[i].key=='qmb')
+      chainMapping.annotations[i].active = qmeanbraneActive;
+
+  if(qmeanbraneActive)
+    $('.qmError').hide();
+  else
+    $('.qmError').show();
+
+  for(let id in modelData)
+    if(modelData[id].status=='COMPLETED')
+      drawQMEAN(id, true); 
+  
+  $('#qmean_localButton').prop('checked','checked');
+  $('.alignTbl')
+    .alignment('colourAllAlignments', {'col': 'qmean_local'});
+}
+
+const pv_viewer = pv.Viewer(document.getElementById('pv'), {
+  background: [1,1,1],
+  width: $('#viewerWrapper').width(),
+  height: $('#viewerWrapper').height(),
+  antialias: true,
+  quality : 'medium',
+  outline: true,
+  fog: true,
+});
+
+function showViewer(viewer)
+{
+  jQuery.cookie('defaultViewer', viewer, { expires: 365, path: '/' });
+  $('#pv_status,#ngl_status').text('');
+  resize();
+  if(viewer=="PV")
+  {
+    $("#ngl,.notPV").hide();
+    $("#pv,.notNGL").show();
+    showPV();
+  }
+  else if(viewer=="NGL")
+  {
+    $("#pv,.notNGL").hide();
+    $("#ngl,.notPV").show();
+    showNGL();
+  }
+}
+
+function showPV()
+{
+  if(pv_viewer._initialized)
+    pv_viewer.requestRedraw();
+  $.each(selectedModels,function(id) {
+      loadModelPV( id );
+    });
+  PLIP.AbstractViewer = PLIP.AbstractViewerPV;
+}
+
+function showNGL(orientationMatrix)
+{
+  if(ngl_stage==null)
+  {
+    ngl_stage = getNGL();
+  }
+  ngl_stage.eachComponent(function(c)
+  { // This could be the case if user switched NGL-PV-NGL
+    // and changed model selection while on PV
+    //if(c.name.startsWith('model_'+id))
+      ngl_stage.removeComponent(c);
+  });
+  $.each(selectedModels,function(id)
+   {
+     loadModelNGL( id, orientationMatrix );
+   });
+    
+  ngl_stage.handleResize();
+  // Disable ctrl+shift-drag that breaks PLIP bonds
+  ngl_stage.mouseControls.remove( "drag-ctrl+shift+right" );
+  ngl_stage.mouseControls.remove( "drag-ctrl+shift+left" );
+  PLIP.AbstractViewer = PLIP.AbstractViewerNGL;
+}
+
+const selectedModels = {};
+function loadModel(id)
+{   
+  if(selectedModels[id])
+    return;
+  
+  $('.emptySelectionMessage').hide();
+
+  selectedModels[id]=true;
+  
+  updateModelRangeColours();
+
+  loadAlignment(id);
+
+  if($('#pv:visible',currentWin.document).length>0)
+    loadModelPV(id);
+  
+  if($('#ngl:visible',currentWin.document).length>0)
+    loadModelNGL(id);
+}
+
+function loadModelPV(id)
+{
+  
+  let pv_structure = pv.io.pdb(eval('model_'+id));
+  
+        {
+          if(pv_structure && selectedModels[id])
+          {
+            let ss = $.cookie('secStruct');
+            if(ss==null)
+              ss='dssp';
+
+            if(ss!='none')
+              for(let i=0; i<modelData[id]['targets'].length; i++)
+              {
+                let target = modelData[id]['targets'][i];
+                for(let c=0; c<target['model_chains'].length; c++)
+                {         
+                  let trg_offset = target['model_chains'][c]['templates'][0]['trg_offset'];
+                  if(!trg_offset)
+                    trg_offset = 1;
+                  let anno_string = target['model_chains'][c][ss+'_string']?
+                              target['model_chains'][c][ss+'_string']
+                             :target['model_chains'][c][ss];
+
+                  if(anno_string)
+                  {
+
+                    let chain = pv_structure.select({'chain':target['model_chains'][c]['id']});
+                    chain.eachResidue(
+                      function(r)
+                      { 
+                        r.full().setSS(anno_string[r.num()-trg_offset])
+                      });
+                  }
+                }
+              }
+
+            pv_viewer.lines('model_'+id+'.ligands_lines',pv_structure.select({'chain':'_'}));
+            pv_viewer.hide('model_'+id+'.ligands_lines');
+            pv_viewer.ballsAndSticks('model_'+id+'.ligands',pv_structure.select({'chain':'_'}));
+            switch($.cookie('defaultRepr'))
+            {
+              case "trace":pv_viewer.trace('model_'+id, pv_structure); break;
+              case "lines":pv_viewer.lines('model_'+id, pv_structure); break;
+              case "tube":pv_viewer.tube('model_'+id, pv_structure); break;
+              default: pv_viewer.cartoon('model_'+id, pv_structure);
+            }
+            showMdlMembrane(id, true);
+            pv_viewer.fitTo(pv_structure);
+            pv_viewer.options('animateTime', 1500);
+            $('.alignTbl').first().alignment('viewerInitialised'); 
+          }
+          pv_viewer.fitParent();
+          refreshBondsAndLigandHighlights();
+          if(chainMapping.defaultColourScheme=='features')
+            processAnnotations(id);
+        }
+  
+}
+
+function loadModelNGL(id, orientationMatrix)
+{ 
+  
+  let strucBlob = new Blob( [ eval('model_'+id) ], { type: 'text/plain'} );
+  ngl_stage.loadFile( strucBlob, { ext: "pdb" } )
+  
+     .then( function(struc)
+    {
+      var ss = $.cookie('secStruct');
+      if(ss==null)
+        ss='dssp';
+      var clearStruc = (ss=='none');
+
+      for(var i=0; i<modelData[id]['targets'].length; i++)
+      {
+        var target = modelData[id]['targets'][i];
+        var chns = Object.keys(target['model_chains'])
+        for(var c=0; c<chns.length; c++)
+        {   
+          var trg_offset = target['model_chains'][c]['templates'][0]['trg_offset'];
+          if(!trg_offset)
+            trg_offset = 1;
+          
+          var anno_string = target['model_chains'][c][ss+'_string']?
+                              target['model_chains'][c][ss+'_string']
+                             :target['model_chains'][c][ss];
+          if(!anno_string)
+            clearStruc = true;
+
+          for(comp in ngl_stage.compList)
+          { 
+            ngl_stage.compList[comp]
+               .structure
+               .eachResidue(function(a)
+                    {
+                      if(clearStruc)
+                        a.sstruc = '';
+                      else if(anno_string && a.chainname == target['model_chains'][c]['id'])
+                      {
+                        if(anno_string[a.resno-trg_offset])
+                          a.sstruc = anno_string[a.resno-trg_offset].toLowerCase();
+                        else
+                          a.sstruc = '';
+                      }  
+                    });
+            break;
+          }
+        } 
+      }
+
+      if(modelData[id].membrane && $('#membraneCB_'+id+':checked').length==1)
+      {
+        // NGL looks down z axis, needs extra rotation 
+        ngl_stage.viewerControls.orient(modelData[id].membrane.viewTransform);
+      }
+      
+      setupNGLRepresentations(struc, 'model_'+id, true, ['line'], orientationMatrix); 
+      showMdlMembrane(id, true);
+      if(chainMapping.defaultColourScheme=='features')
+        processAnnotations(id);
+  });
+}
+
+function removeModel(id)
+{
+  // Remove PLIP bonds
+  if (plip_bonds != null) {
+    $('#mdl_row_' + id + ' li.plip-interaction-list-item input:checked').each(function(index, el) {
+      $(el).prop("checked", false).trigger("change");
+    });
+  }
+  if (plip_residues != null && plip_residues.hasStruc('model_' + id)) {
+    visible_residues = plip_residues.getVisibleResidues('model_' + id)
+    if (visible_residues) {
+      visible_residues.forEach(function(residue) {
+			residue.hide(false);
+		});
+    }
+  }
+  
+  delete selectedModels[id];
+  updateModelRangeColours();
+  if(Object.keys(selectedModels).length==0)
+  {
+    $('.emptySelectionMessage').show();
+  }
+
+  pv_viewer.rm('model_'+id+'*');
+  pv_viewer.autoZoom();
+  pv_viewer.requestRedraw();
+
+  if($('#ngl:visible',currentWin.document).length>0)
+  { 
+    ngl_stage.eachComponent(function(c)
+      {
+        if(c.name.startsWith('model_'+id))
+          ngl_stage.removeComponent(c);
+      });
+    ngl_stage.autoView(1000);
+  }
+}
+
+function drawQMEAN(id, resizing)
+{
+  if(typeof resizing==='undefined')
+    resizing = false;
+
+  let strucId = 'model_'+id;
+  if(!chainMapping.structures[strucId])
+    loadAlignment(id);
+
+  if(!modelData[id].mappedResCount)
+  {
+    modelData[id].mappedResCount = 0
+    for(chn in chainMapping.structures[strucId])
+      for(res in chainMapping.structures[strucId][chn])
+        if(chainMapping.structures[strucId][chn][res].resno)
+          modelData[id].mappedResCount++;
+  }
+
+  if(modelData[id]['qmean_global'])
+    drawQMEANGlobal(modelData[id].qmean_global, modelData[id].mappedResCount, id, false, resizing);
+  
+  drawQMEANLocal(strucId, (qmeanbraneActive?null:modelData[id].qmean_global.avg_local_score), id, true, resizing, qmeanbraneActive, 120);
+
+  $('a[rel=lq-'+id+'],a[href="#qn-chart-'+id+'"]')
+    .fancybox(
+      {
+        padding:30, 
+        'cyclic':true,
+        'hideOnContentClick':true,
+        beforeShow:function(a,b)
+        {
+          var id = $(this.content[0]).first().attr('id');
+          if(id.indexOf('lq-chart')>-1)
+            $('#'+id).closest('.fancybox-outer').after(
+               '<a style="color:#666;float:right;" onclick="svgToPNG(\''+id+'\',\'Local_quality_estimate.png\');">&#128247; Save as PNG</a>'
+               );
+          else if(id.indexOf('qn-chart')>-1)
+            $('#'+id).closest('.fancybox-outer').after(
+               '<a style="color:#666;float:right;" onclick="svgToPNG(\''+id+'\',\'Quality_comparison.png\');">&#128247; Save as PNG</a>'
+               );
+        }
+      });
+}
+
+function drawModelCoverage()
+{
+  let targets = {};
+  let maxTrgLength = 0;
+  $('div[template_count]')
+    .each(function()
+      {        
+        let counterSeen = [];
+        $(this).find('div[id^=range_]')
+            .each(
+            function()
+            {
+              let ids = $(this).attr('id').substring(6).split('_'); // model_id, targetName, counter
+              if(counterSeen.indexOf(ids[1])>-1)
+                return;
+
+              counterSeen.push(ids[1]);
+
+              let rows;
+              if(targets[ids[1]])
+              {
+                rows = targets[ids[1]];
+              }
+              else
+              {
+                rows = [];
+                targets[ids[1]] = rows;
+              }
+
+              rows.push([parseInt($(this).attr('resFrom')),
+                         parseInt($(this).attr('resTo')),
+                         ids[0],
+                         parseFloat($(this).attr('seqSim')),
+                         parseInt($(this).attr('seqlength'))]);
+
+              maxTrgLength = Math.max(maxTrgLength,
+                    rows[rows.length-1][4] );
+            });
+      });
+
+  if(maxTrgLength==0)
+    return;
+
+
+  $('#modelRangeContainer').show();
+
+  $('#model-range').empty();
+  let totalHeight = 16;
+
+  for(target in targets)
+  {
+    let rows = targets[target];
+    let modRangeDiv = $('#model-range').append(`<div id="model-range-${target}"></div>`);
+    let targetLength = rows[0][4];
+    let w=$('#model-range').innerWidth(), barHeight=12, space=0;
+
+    // w should be proportional to longest target
+    w = (targetLength/maxTrgLength)*w;
+    
+    let scale = (targetLength)/w;
+    let h=(rows.length+1)*(barHeight+1+space)+15;
+    totalHeight += h;
+    let p = Raphael(`model-range-${target}`,w,h);
+    let ticks = "";
+    
+    let tickSize = targetLength<400?10:50;
+    for(let x=tickSize; x<targetLength; x+=tickSize)
+      ticks+="M"+(x/scale)+" 15 L"+(x/scale)+" "+h;
+
+    p.path(ticks).attr({'stroke-width':.6,stroke:"rgba(80,80,80,.6)"});
+
+    let r = p.rect(0,15,w,barHeight);
+    r.attr({'stroke-width':1,
+      'stroke':'449',
+      'fill':"rgb(20,140,10)",
+      'title':'Target sequence; Length: '+targetLength});
+    p.text(1, 8, "1").attr({font: "12px Fontin-Sans, Arial", fill: "#000", "text-anchor": "start"});
+    p.text(w-1, 8, targetLength).attr({font: "12px Fontin-Sans, Arial", fill: "#000", "text-anchor": "end"});
+
+    for(let r=0; r<rows.length; r++)
+    {
+      let rect = p.rect( (rows[r][0]-1)/scale,
+                  (r+1)*(barHeight+space)+15,
+                  (rows[r][1]-rows[r][0]+1)/scale,
+                  barHeight);
+
+      let model = modelData[rows[r][2]];
+      let ligSummary = '';
+      for(let i=0; i<model.included_ligands.length; i++)
+        ligSummary+=model.included_ligands[i].count
+                  +'x'+model.included_ligands[i].name+'; ';
+      if(ligSummary!='')
+        ligSummary = '\nLigands: '+ligSummary
+      rect.attr({
+           // title:`Model ${rows[r][2]}\nOligo-state: ${model.oligo_state.charAt(0).toUpperCase()}${model.oligo_state.substring(1)}\nRange: ${rows[r][0]}-${rows[r][1]} (Chain${model.targets[target].id.length>1?'s':''} ${model.targets[target].id})\nGMQE: ${model.gmqe.toFixed(2)}\nQMEANDisCo: ${model.qmean_global.avg_local_score.toFixed(2)}${ligSummary}`,
+              'stroke-width':1,
+              'stroke':"#008",
+              'fill':"rgba(31,31,210,"+rows[r][3]+")",
+              'cursor':'pointer'})
+
+      rect.node.id = `mdl_bar_${rows[r][2]}_${target}`
+      rect.mousedown(function() 
+              {   
+                let id = this.node.id.split('_')[2];
+                if(selectedModels[id])
+                {
+                  $(".popover img").css({'border':'1px solid #EEE'});
+                  removeModel(id);
+                }
+                else
+                {
+                  $(".popover img").css({'border':'1px solid #F66'});
+                  loadModel(id);
+                }
+              });
+
+      if(rows.length>1 && $(window).width()>800)
+        rect.mouseover(function(evt)
+            {
+              let id = this.node.id.split('_')[2];
+              mouseOverModel(id);
+            });
+    }
+  }
+  
+  updateModelRangeColours();
+}
+
+
+function updateModelRangeColours()
+{
+  $('rect[id^=mdl_bar_]').each(
+      function()
+      {
+        var id = $(this).attr('id').split('_')[2];
+        if(selectedModels[id])
+        {
+          $('#modelImage_'+id).css('border','2px solid #F66');
+          $('#mdl_row_'+id).css({
+            'border':'1px solid #CCC',
+            'box-shadow': '0 0 5px rgba(180, 180, 180, 1)',
+            '-webkit-box-shadow': '0 0 5px rgba(180, 180, 180, 1)',
+            '-moz-box-shadow': '0 0 5px rgba(180, 180, 180, 1)' });
+
+          $(this).attr({'stroke-width':2,'stroke':'#F00'});
+        }
+        else
+        {
+          $('#modelImage_'+id).css('border','2px solid #EEE');
+          $('#mdl_row_'+id).css({'border':'1px solid #DDD',
+                'box-shadow': 'none',
+                '-webkit-box-shadow': 'none',
+                '-moz-box-shadow': 'none'
+              });
+          $(this).attr({'stroke-width':.8,'stroke':'#00A'});
+        }
+      });
+}
+
+function mouseOverModel(mdlid)
+{
+  // Check if 3D viewer is being rotated
+  if(
+      (ngl_stage && ngl_stage.mouseObserver.pressed) || 
+      (pv_viewer._mouseHandler._lastMouseDownTime
+        && (pv_viewer._mouseHandler._lastMouseDownTime==null || 
+            pv_viewer._mouseHandler._lastMouseUpTime<pv_viewer._mouseHandler._lastMouseDownTime))
+    )
+    return;
+
+  $('rect[id^=mdl_bar_]').each(
+      function()
+      {
+        var id = $(this).attr('id').split('_')[2];
+        if(selectedModels[id])
+        {
+            // 
+        } 
+        else if(id==mdlid)
+        {
+          $(this).attr({'stroke-width':2,'stroke':'#009'});
+        }
+        else if(id!=mdlid)
+          $(this).attr({'stroke-width':.8,'stroke':'#00A'});
+
+      });
+}
+
+function sortModels(column)
+{
+  let asc = false;
+  let val_a = -1, val_b = 1;
+  if(!asc)
+      val_a = 1, val_b = -1;
+
+  let mdls = [];
+  for(let mdl in modelData)
+    mdls.push(mdl);
+
+  if(column=='qmeanDisCo')
+    mdls.sort(
+      function(a,b)
+      {
+          return modelData[a].qmean_global.avg_local_score < modelData[b].qmean_global.avg_local_score;
+      });
+  else  
+    mdls.sort(
+      function(a,b)
+      {
+          return  (modelData[a][column] < modelData[b][column]) ? val_a : (modelData[a][column] > modelData[b][column]) ? val_b : 0;
+      });
+
+  let mdlRows = [];
+  for(let i=0; i<mdls.length; i++)
+    mdlRows.push( $('#mdl_row_'+mdls[i]) );
+
+  $('#modelSummaryTable')
+    .append(mdlRows);
+
+  drawModelCoverage();
+}
+
+
+
+
+$(document).ready(
+    function()
+    {
+      let checkThese = '';
+      let localData = localStorage.getItem('model');
+      if(localData)
+      {
+        let models = JSON.parse(localData);
+        for(let i=0; i<models.length; i++)
+            checkThese+=(i==0?'':',')+'#cmp_'+models[i].model_id;
+        if(checkThese.length>0)
+          $(checkThese)
+                .prop('checked','checked')
+                .parent()
+                    .after("<a href='/comparison/' class='compareLink' target='_blank'>Compare <i class='glyphicon glyphicon-new-window'/></a>");
+
+      }
+      $('.compareCheck').not(checkThese).prop('checked','');
+  });
+
+function toggleCompareItem(evt)
+{       
+    if($('input.compareCheck:checked').length>0)
+    {
+        if($('.compareLink').length==0)
+          $('input.compareCheck').closest('label')
+            .after("<a href='/comparison/' class='compareLink' target='_blank'>Compare <i class='glyphicon glyphicon-new-window'/></a>");
+    }
+    else
+        $('.compareLink').remove();
+
+    if(evt.target.checked)
+        $.ajax({
+            type:'POST',
+            url:"/comparison/add/",
+            data: { 
+                  'model_id':evt.target.id.substring(4),
+                  'source': 'swissmodel',
+                  'csrfmiddlewaretoken':'bi3tZmbErCAekqW83el5QkdaeWfcsio5lmAqUuXx2g8lOJHPgnZuaN2PlvRCx0E3' 
+                },
+            success: function(data) {
+                let locStore = localStorage.getItem('model');
+                if(locStore==null)
+                    locData = [];
+                else
+                {
+                    locData = JSON.parse(locStore);
+                    let exists = false; 
+                    for(var i=0; i<locData.length; i++)
+                        if(locData[i].model_id==data['model_id'])
+                            return;
+                }
+                locData.push(data)
+                localStorage.setItem('model',JSON.stringify(locData));
+            },
+            error: function(response)
+            {
+                $(evt.target)
+                    .prop({'checked':false,'disabled':true})
+                    .after('Could not add this model!')
+                    .parent()
+                    .find('.compareLink')
+                    .remove();
+            }
+        });
+    else
+    {
+        let locStore = localStorage.getItem('model');
+        if(!locStore)
+            return;
+        let model_id = evt.target.id.substring(4);
+        locData = JSON.parse(locStore);
+        for(var i=0; i<locData.length; i++)
+            if(locData[i].model_id==model_id)
+            {
+                locData.splice(i,1);
+                break;
+            }
+        localStorage.setItem('model',JSON.stringify(locData));
+    }
+}
+
+$(window).on('storage', comparison_updated);
+function comparison_updated(ev)
+{
+    if (ev.originalEvent.key!='model') return;
+    var checkThese = ''
+    if(ev.originalEvent.newValue)
+    {
+        var models = JSON.parse(ev.originalEvent.newValue);
+        for(var i=0; i<models.length; i++)
+            checkThese+=(i==0?'':',')+'#cmp_'+models[i].model_id;
+        if(checkThese.length>0)
+            $(checkThese).prop('checked','checked');
+    }
+    $('.compareCheck').not(checkThese).prop('checked','');
+}
+
+$(document).on('change', 'input.compareCheck',
+   function(evt) {  toggleCompareItem(evt);  });
+
+</script>
+
+

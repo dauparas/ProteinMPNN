@@ -1,0 +1,1131 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mRFP | Report</title>
+    <meta name="description" content="SWISS-MODEL modelling results for mRFP." />
+    <link rel="stylesheet" type="text/css" href="../web/js/jquery.fancybox.css"/>
+    <style>
+			.sequence { font-size: 12px; font-family:"Courier New", Courier, monospace;}
+			h2 {font-size: 1.2em; font-family:Arial; margin:20 0 0 0}
+			h3 {font-size: 1.0em; font-family:Arial; margin:0 0 0 0}
+			
+			.borderedTbl>tbody>tr>td, .borderedTbl th{ 
+        text-align:center;
+  			border-top:1px solid #DDD;
+  			border-left:1px solid #DDD;
+      }
+      .borderedTbl{
+        border-bottom:1px solid #DDD;
+        border-right:1px solid #DDD; 
+      }
+      td { 
+        -webkit-hyphens: auto;
+           -moz-hyphens: auto;
+                hyphens: auto; 
+              }
+
+			body {
+			width:100%; 
+			height:100%; 
+			background-color: #E7E8EA;
+			margin: 0;
+			padding: 0;
+			word-wrap: break-word;
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 14px;
+
+			}
+			#content{
+			padding:20px;
+			width:780px;
+			margin-left:auto;
+			margin-right:auto;
+			background-color:#FFF;}
+			
+			#sib_footer {
+			background-color: #333333;
+			color: #F7F8FA;
+			font-family: Verdana;
+			font-size: 10px;
+			font-weight: normal;
+			height: 20px;
+			letter-spacing: 1px;
+			
+			width:760px;
+      margin-left:auto;
+      margin-right:auto;
+      padding:0px 20px 0px 20px
+			}
+			
+			#sib_footer a {
+  			color: #FFFFFF;
+  			font-family: Verdana;
+  			font-size: 10px;
+  			font-weight: normal;
+  			letter-spacing: 1px;
+			}
+			a, a:link, a:visited {
+			color: #D6161D;
+			text-decoration: none;
+			} 	
+
+			.alTbl{ font-family:'Courier New', Courier, monospace; }
+	   img{ border:0; }
+			
+	@media print{
+	
+	#content{
+			padding:20px;
+			background-color:#FFF;
+		}
+	body{ 
+	    width:100%;
+	    height:100%; 
+	    background-color: #FFF;
+			padding: 0;
+		}	
+	#sib_footer{
+		display:none;
+	}
+	}
+      
+    </style>
+  </head>
+  <body>
+  
+  <div id="content">
+  	<table border=0 width="100%">
+  		<tr>
+    		<td valign="middle">
+  			<a title="SIB Swiss Institute of Bioinformatics" href="https://www.sib.swiss">
+  			<img src="../web/images/sib_logo_small.png"></a>
+  		</td>
+  		<td valign="middle">
+  			<a title="Biozentrum, University of Basel" href="https://www.biozentrum.unibas.ch">
+  			<img src="../web/images/biozentrum_en.png"></a>
+  		</td>
+		  <td valign="middle"><div style="font-size:1.9em;">SWISS-MODEL Homology Modelling Report</div> </td>
+	 </tr>
+	</table> 
+    
+  <div style="clear:both"></div>
+
+
+ 
+  <h2>Model Building Report</h2>
+  <p>
+This document lists the results for the homology modelling project &quot;mRFP&quot; submitted to SWISS-MODEL workspace
+on Nov. 8, 2022, 6:20 a.m..The submitted primary amino acid sequence is given in Table T1.</p>
+<p>If you use any results in your research, please cite the relevant publications:</p>
+<ul>
+  <li>Waterhouse, A., Bertoni, M., Bienert, S., Studer, G., Tauriello, G., Gumienny, R.,
+      Heer, F.T., de Beer, T.A.P., Rempfer, C., Bordoli, L., Lepore, R., Schwede, T.   
+      SWISS-MODEL: homology modelling of protein structures and complexes.
+      Nucleic Acids Res. 46(W1), W296-W303 (2018).
+    <a href="https://pubmed.ncbi.nlm.nih.gov/29788355"
+       target="_blank"><img src="../web/images/pubmed.png
+                                 "
+                            width="17" height="16" align="absmiddle"></a>
+    <a href="https://dx.doi.org/10.1093/nar/gky427"
+       target="_blank"><img src="../web/images/doi.jpg
+                                 "
+                            width="30" height="16" align="absmiddle"
+                            style="padding-left:2px"></a>
+  </li>
+  <li>Bienert, S., Waterhouse, A., de Beer, T.A.P., Tauriello, G., Studer,
+    G., Bordoli, L., Schwede, T. The SWISS-MODEL Repository - new features and
+    functionality. Nucleic Acids Res. 45, D313-D319 (2017).
+    <a href="https://pubmed.ncbi.nlm.nih.gov/27899672"
+       target="_blank"><img src="../web/images/pubmed.png
+                                 "
+                            width="17" height="16" align="absmiddle"></a>
+    <a href="https://dx.doi.org/10.1093/nar/gkw1132"
+       target="_blank"><img src="../web/images/doi.jpg
+                                 "
+                            width="30" height="16" align="absmiddle"
+                            style="padding-left:2px"></a>
+  </li>
+  <li><a name="promod3"></a>Studer, G., Tauriello, G., Bienert, S.,     
+          Biasini, M., Johner, N., Schwede, T. ProMod3 - A versatile homology 
+          modelling toolbox. PLOS Comp. Biol. 17(1), e1008667 (2021).
+    <a href="https://pubmed.ncbi.nlm.nih.gov/33507980"
+       target="_blank"><img src="../web/images/pubmed.png
+                                 "
+                            width="17" height="16" align="absmiddle"></a>
+    <a href=" https://doi.org/10.1371/journal.pcbi.1008667"
+       target="_blank"><img src="../web/images/doi.jpg
+                                 "
+                            width="30" height="16" align="absmiddle"
+                            style="padding-left:2px"></a>
+  </li>
+  <li><a name="qmean"></a>Studer, G., Rempfer, C., Waterhouse, A.M., 
+    Gumienny, G., Haas, J., Schwede, T. QMEANDisCo - distance constraints 
+    applied on model quality estimation. Bioinformatics 36, 1765-1771 (2020).
+    <a href="https://pubmed.ncbi.nlm.nih.gov/31697312"
+       target="_blank"><img src="../web/images/pubmed.png
+                                 "
+                            width="17" height="16" align="absmiddle"></a>
+    <a href="https://dx.doi.org/10.1093/bioinformatics/btz828"
+       target="_blank"><img src="../web/images/doi.jpg
+                                 "
+                            width="30" height="16" align="absmiddle"
+                            style="padding-left:2px"></a>
+  </li>
+  <li><a name="qsqe"></a>Bertoni, M., Kiefer, F., Biasini, M., Bordoli, L.,
+    Schwede, T. Modeling protein quaternary structure of homo- and
+    hetero-oligomers beyond binary interactions by homology. Scientific
+    Reports 7 (2017).
+    <a href="https://pubmed.ncbi.nlm.nih.gov/28874689"
+       target="_blank"><img src="../web/images/pubmed.png
+                                 "
+                            width="17" height="16" align="absmiddle"></a>
+    <a href="https://dx.doi.org/10.1038/s41598-017-09654-8"
+       target="_blank"><img src="../web/images/doi.jpg
+                                 "
+                            width="30" height="16" align="absmiddle"
+                            style="padding-left:2px"></a>
+  </li>
+</ul>
+
+<h2>Results</h2>
+<p>
+The SWISS-MODEL template library (SMTL version 2022-11-07, PDB release 2022-10-21) was searched with 
+
+ 
+ 
+
+ for evolutionary related structures matching the target sequence in Table T1. For details on the template search, see Materials and Methods. Overall 1448 templates were found (Table T2).</p>
+
+
+<h2>Models</h2>
+
+
+<p>The following model was built (see Materials and Methods "Model Building"):</p>
+
+      
+
+      <table id="model_01" class="borderedTbl" width="100%" border=0 cellspacing=1 cellpadding=5>
+  		<thead>
+        <tr>
+        <th><h3>Model #01</h3></th>
+        <th>File</th>
+        <th>Built with</th>
+        <th>Oligo-State</th>
+        <th>Ligands</th>
+        <th title="Global Model Quality Estimate">GMQE</th>
+        <th>QMEANDisCo Global</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><a href="models/01/01.png" target="_blank"><img height="60" src="models/01/01.png"></a>
+        </td>
+  	    <td><a href="models/01/model.pdb" target="_blank">PDB</a></td>
+  		<td>ProMod3 3.2.1</td>
+        <td>monomer </td>
+        <td>
+          <div style="max-width:350px;">None
+          </div>
+        </td>
+        <td>0.94</td>
+        <td><span id="avgLocalScore_01">0.88</span> &plusmn; 0.06</td>
+      </tr>
+     </table>
+  	
+  	<table width="100%" cellspacing=5>
+  	<tr>
+  	    <td width="30%">
+       	 <table id="qmeanGlobalTbl01"></table>
+        </td>
+          <td width="33%">
+            <a href="#lq-chart-01" rel="lq-01" class="fancybox">
+              <div id="lq-chart-01-thumb" style="margin:12px 4px;"></div>
+            </a>
+            <div id="lq-chart-01" style="display:none"></div>
+          </td>
+
+          <td width="33%">
+            <a href="#qn-chart-01" class="fancybox">
+              <div id="qn-chart-01-thumb" style="margin:12px 4px;"></div>
+            </a>
+            <div id="qn-chart-01" style="display:none"></div>
+          </td>
+  	 </tr>
+  	</table>
+
+
+  	<table class="borderedTbl">
+  		<thead>
+  			<tr>
+  				<th>Template</th>
+  				<th>Seq Identity</th>
+  				<th>Oligo-state</th>
+  				<th>QSQE</th>
+  				<th>Found by</th>
+  				<th>Method</th>
+  				<th>Resolution</th>
+  				<th>Seq Similarity</th>
+  				<th>Range</th>
+  				<th>Coverage</th>
+  				<th>Description</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+        
+        
+        <tr>
+  				<td>
+                
+              <a href="models/01/templates/2qli.1.A.pdb.gz" target="_blank">2qli.1.A</a>
+                
+              
+          </td>
+  				<td>93.72</td>
+  				<td>monomer</td>
+  				<td>0.00</td>
+  				<td>BLAST</td>
+  				<td>X-ray</td>
+  				<td>1.34&Aring;</td>
+  				<td>0.60</td>
+  				<td>6 - 222
+
+        </td>
+  				<td>0.99</td>
+  				<td>
+          Fluorescent protein plum</td>
+  			</tr>
+  		</tbody>
+  	</table> 
+  	
+    
+    <br>
+    <h3>The template contained no ligands.</h3>
+    
+
+    
+
+  
+
+<br>
+
+
+<pre>Target    MASSEDVIKEFMRFKVRMEGSVNGHEFEIEGEGEGRPYEGTQTAKLKVTKGGPLPFAWDILSPQFQYGSKAYVKHPADIP<br>2qli.1.A  VSKGEEVIKEFMRFKQHMEGSVNGHEFEIEGEGEGRPYEGTQTARLKVTKGGPLPFAWDILSPQIX--SKAYVKHPADIP<br><br>Target    DYLKLSFPEGFKWERVMNFEDGGVVTVTQDSSLQDGEFIYKVKLRGTNFPSDGPVMQKKTMGWEASTERMYPEDGALKGE<br>2qli.1.A  DYLKLSFPEGFKWERVMNFEDGGVVTVTQDSSLQDGEFIYKVKVRGTNFPSDGPVMQKKTMGWEASSERMYPEDGALKGE<br><br>Target    IKMRLKLKDGGHYDAEVKTTYMAKKPVQLPGAYKTDIKLDITSHNEDYTIVEQYERAEGRHSTGA<br>2qli.1.A  MKMRLRLKDGGHYDAEVKTTYMAKKPVQLPGAYKTDIKLDITSHNEDYTIVEQYERAEGRHSTGA<br><br></pre>
+
+
+  <br>
+  <hr><br>
+  
+
+
+
+
+
+<h2>Materials and Methods</h2>
+
+
+
+<h2>Template Search</h2>
+<p>Template search with 
+ 
+ 
+ has been performed against the SWISS-MODEL template library (SMTL, last update: 2022-11-07, last included PDB release: 2022-10-21).</p>
+
+
+
+
+
+
+
+
+
+<h2>Template Selection</h2>
+<p>For each identified template, the template's quality has been predicted from features of the target-template alignment.
+ The templates with the highest quality have then been selected for model building.</p>
+
+
+
+
+
+
+
+
+
+
+
+<h2>Model Building</h2>
+<p>
+Models are built based on the target-template alignment using ProMod3 (<a href="#promod3">Studer et al.</a>). Coordinates which are conserved between the target and the template are copied from the template to the model. Insertions and deletions are remodelled using a fragment library. Side chains are then rebuilt. Finally, the geometry of the resulting model is regularized by using a force field.
+</p>
+
+<h2>Model Quality Estimation</h2>
+<p>
+The global and per-residue model quality has been assessed using the QMEAN scoring function (<a href="#qmean">Studer et al.</a>).
+</p>
+
+<h2>Ligand Modelling</h2>
+<p>
+Ligands present in the template structure are transferred by homology to the model when the following criteria are met: (a) The ligands are annotated as biologically relevant in the template library, (b) the ligand is in contact with the model, (c) the ligand is not clashing with the protein, (d) the residues in contact with the ligand are conserved between the target and the template. If any of these four criteria is not satisfied, a certain ligand will not be included in the model. The model summary includes information on why and which ligand has not been included.</p>
+
+<h2>Oligomeric State Conservation</h2>
+<p>
+The quaternary structure annotation of the template is used to model the target sequence in its oligomeric form. The method (<a href="#qsqe">Bertoni et al.</a>) is based on a supervised machine learning algorithm, Support Vector Machines (SVM), which combines interface conservation, structural clustering, and other template features to provide a quaternary structure quality estimate (QSQE). The QSQE score is a number between 0 and 1, reflecting the expected accuracy of the interchain contacts for a model built based a given alignment and template. Higher numbers indicate higher reliability. This complements the GMQE score which estimates the accuracy of the tertiary structure of the resulting model.</p>
+
+<h2>References</h2>
+<p>
+  <ul>
+    <li><a name="blastp"></a><b>BLAST</b><br>
+        Camacho, C., Coulouris, G., Avagyan, V., Ma, N., Papadopoulos, J.,
+        Bealer, K., Madden, T.L. BLAST+: architecture and applications. BMC
+        Bioinformatics 10, 421-430 (2009).
+        <a target="_blank" href="https://pubmed.ncbi.nlm.nih.gov/20003500">
+          <img width="17" align="absmiddle" height="16"
+               src="../web/images/pubmed.png
+                    "></a>
+        <a href="https://dx.doi.org/10.1186/1471-2105-10-421"
+           target="_blank"><img src="../web/images/doi.jpg
+                                     " width="30"
+                                height="16" align="absmiddle"
+                                style="padding-left:2px"></a></li>
+    <li><a name="hhblits"></a><b>HHblits</b><br>
+         Steinegger, M., Meier, M., Mirdita, M., V&ouml;hringer, H., Haunsberger,
+        S. J., S&ouml;ding, J. HH-suite3 for fast remote homology detection and
+        deep protein annotation. BMC Bioinformatics 20, 473 (2019).
+        <a target="_blank" href="https://pubmed.ncbi.nlm.nih.gov/31521110">
+          <img width="17" align="absmiddle" height="16"
+               src="../web/images/pubmed.png
+                    "></a>
+        <a href="https://dx.doi.org/10.1186/s12859-019-3019-7"
+           target="_blank"><img src="../web/images/doi.jpg
+                                     " width="30"
+                                height="16" align="absmiddle"
+                                style="padding-left:2px"></a></li>
+    
+    
+    
+  </ul>
+
+<h2>Table T1:</h2>
+<p>Primary amino acid sequence for which templates were searched and models were built.</p>
+<div class="sequence">MASSEDVIKEFMRFKVRMEGSVNGHEFEIEGEGEGRPYEGTQTAKLKVTKGGPLPFAWDILSPQFQYGSKAYVKHPADIPDYLKLSFPEGFKWERVMNFE<br>DGGVVTVTQDSSLQDGEFIYKVKLRGTNFPSDGPVMQKKTMGWEASTERMYPEDGALKGEIKMRLKLKDGGHYDAEVKTTYMAKKPVQLPGAYKTDIKLD<br>ITSHNEDYTIVEQYERAEGRHSTGA<br></div>
+
+
+<h2>Table T2:</h2>
+<table class="borderedTbl">
+<thead>
+	<tr>
+		<th>Template</th>
+		<th>Seq Identity</th>
+		<th>Oligo-state</th>
+		<th>QSQE</th>
+		<th>Found by</th>
+		<th>Method</th>
+		<th>Resolution</th>
+		<th>Seq Similarity</th>
+		<th>Coverage</th>
+		<th>Description</th>
+	</tr>
+</thead>
+<tbody>
+
+<tr>
+		<td>2qli.1.A</td>
+		<td>93.72</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.34&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>4h3l.1.A</td>
+		<td>93.72</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.65&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>7sak.1.A</td>
+		<td>95.39</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.15&Aring;</td>
+		<td>0.61</td>
+		<td>0.96</td>
+		<td>mCherry</td>
+	</tr>
+<tr>
+		<td>2qlg.1.A</td>
+		<td>93.72</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.80&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>7sal.1.A</td>
+		<td>95.39</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.93&Aring;</td>
+		<td>0.61</td>
+		<td>0.96</td>
+		<td>mCherry</td>
+	</tr>
+<tr>
+		<td>7sal.2.A</td>
+		<td>95.39</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.93&Aring;</td>
+		<td>0.61</td>
+		<td>0.96</td>
+		<td>mCherry</td>
+	</tr>
+<tr>
+		<td>4h3n.1.A</td>
+		<td>92.38</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.75&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>2qlh.1.A</td>
+		<td>93.72</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>3nf0.1.A</td>
+		<td>92.83</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.75&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>2qlh.1.A</td>
+		<td>94.57</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.60</td>
+		<td>0.98</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>4h3m.1.A</td>
+		<td>92.38</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.00&Aring;</td>
+		<td>0.60</td>
+		<td>0.99</td>
+		<td>Fluorescent protein plum</td>
+	</tr>
+<tr>
+		<td>7saj.1.A</td>
+		<td>95.39</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.37&Aring;</td>
+		<td>0.61</td>
+		<td>0.96</td>
+		<td>mCherry</td>
+	</tr>
+<tr>
+		<td>4q7r.1.A</td>
+		<td>91.32</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.40&Aring;</td>
+		<td>0.59</td>
+		<td>0.97</td>
+		<td>LSSmOrange</td>
+	</tr>
+<tr>
+		<td>7saj.5.A</td>
+		<td>95.39</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.37&Aring;</td>
+		<td>0.61</td>
+		<td>0.96</td>
+		<td>mCherry</td>
+	</tr>
+<tr>
+		<td>4q7t.1.A</td>
+		<td>89.95</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.94&Aring;</td>
+		<td>0.59</td>
+		<td>0.97</td>
+		<td>PSmOrange</td>
+	</tr>
+<tr>
+		<td>2vae.1.A</td>
+		<td>88.69</td>
+		<td>homo-tetramer</td>
+		<td>0.53</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.64&Aring;</td>
+		<td>0.58</td>
+		<td>0.98</td>
+		<td>RED FLUORESCENT PROTEIN</td>
+	</tr>
+<tr>
+		<td>7ry2.1.A</td>
+		<td>90.37</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.05&Aring;</td>
+		<td>0.59</td>
+		<td>0.97</td>
+		<td>mSandy2</td>
+	</tr>
+<tr>
+		<td>7ry2.5.A</td>
+		<td>90.37</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.05&Aring;</td>
+		<td>0.59</td>
+		<td>0.97</td>
+		<td>mSandy2</td>
+	</tr>
+<tr>
+		<td>4q7u.1.A</td>
+		<td>87.67</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.30&Aring;</td>
+		<td>0.58</td>
+		<td>0.97</td>
+		<td>PSmOrange2</td>
+	</tr>
+<tr>
+		<td>7ry2.1.A</td>
+		<td>91.71</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.05&Aring;</td>
+		<td>0.59</td>
+		<td>0.96</td>
+		<td>mSandy2</td>
+	</tr>
+<tr>
+		<td>3kcs.1.A</td>
+		<td>90.78</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.50&Aring;</td>
+		<td>0.59</td>
+		<td>0.96</td>
+		<td>PAmCherry1 protein</td>
+	</tr>
+<tr>
+		<td>7ry2.5.A</td>
+		<td>91.71</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.05&Aring;</td>
+		<td>0.59</td>
+		<td>0.96</td>
+		<td>mSandy2</td>
+	</tr>
+<tr>
+		<td>3kcs.1.A</td>
+		<td>91.24</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.50&Aring;</td>
+		<td>0.59</td>
+		<td>0.96</td>
+		<td>PAmCherry1 protein</td>
+	</tr>
+<tr>
+		<td>2vad.1.A</td>
+		<td>80.18</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.59&Aring;</td>
+		<td>0.56</td>
+		<td>0.99</td>
+		<td>RED FLUORESCENT PROTEIN</td>
+	</tr>
+<tr>
+		<td>2vad.1.A</td>
+		<td>80.91</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.59&Aring;</td>
+		<td>0.56</td>
+		<td>0.98</td>
+		<td>RED FLUORESCENT PROTEIN</td>
+	</tr>
+<tr>
+		<td>2vae.1.A</td>
+		<td>89.50</td>
+		<td>homo-tetramer</td>
+		<td>0.53</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.64&Aring;</td>
+		<td>0.58</td>
+		<td>0.97</td>
+		<td>RED FLUORESCENT PROTEIN</td>
+	</tr>
+<tr>
+		<td>4q7t.1.A</td>
+		<td>91.67</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.94&Aring;</td>
+		<td>0.59</td>
+		<td>0.96</td>
+		<td>PSmOrange</td>
+	</tr>
+<tr>
+		<td>4q7u.1.A</td>
+		<td>89.35</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.30&Aring;</td>
+		<td>0.59</td>
+		<td>0.96</td>
+		<td>PSmOrange2</td>
+	</tr>
+<tr>
+		<td>1zgq.1.B</td>
+		<td>85.52</td>
+		<td>homo-tetramer</td>
+		<td>0.60</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.57</td>
+		<td>0.98</td>
+		<td>Red fluorescent protein drFP583</td>
+	</tr>
+<tr>
+		<td>1zgq.1.B</td>
+		<td>86.30</td>
+		<td>homo-tetramer</td>
+		<td>0.60</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.57</td>
+		<td>0.97</td>
+		<td>Red fluorescent protein drFP583</td>
+	</tr>
+<tr>
+		<td>1ggx.1.A</td>
+		<td>85.52</td>
+		<td>homo-tetramer</td>
+		<td>0.57</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.57</td>
+		<td>0.98</td>
+		<td>PROTEIN (FLUORESCENT PROTEIN FP583)</td>
+	</tr>
+<tr>
+		<td>1g7k.1.A</td>
+		<td>85.84</td>
+		<td>homo-tetramer</td>
+		<td>0.56</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.00&Aring;</td>
+		<td>0.57</td>
+		<td>0.97</td>
+		<td>FLUORESCENT PROTEIN FP583</td>
+	</tr>
+<tr>
+		<td>1ggx.1.A</td>
+		<td>86.30</td>
+		<td>homo-tetramer</td>
+		<td>0.57</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.57</td>
+		<td>0.97</td>
+		<td>PROTEIN (FLUORESCENT PROTEIN FP583)</td>
+	</tr>
+<tr>
+		<td>5lk4.1.A</td>
+		<td>84.98</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.47&Aring;</td>
+		<td>0.58</td>
+		<td>0.95</td>
+		<td>mScarlet</td>
+	</tr>
+<tr>
+		<td>5lk4.1.A</td>
+		<td>85.45</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.47&Aring;</td>
+		<td>0.58</td>
+		<td>0.95</td>
+		<td>mScarlet</td>
+	</tr>
+<tr>
+		<td>1zgp.1.A</td>
+		<td>85.07</td>
+		<td>homo-tetramer</td>
+		<td>0.56</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.90&Aring;</td>
+		<td>0.57</td>
+		<td>0.98</td>
+		<td>Red fluorescent protein drFP583</td>
+	</tr>
+<tr>
+		<td>7oin.1.A</td>
+		<td>83.57</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.40&Aring;</td>
+		<td>0.57</td>
+		<td>0.95</td>
+		<td>LSSmScarlet - Genetically Encoded Red Fluorescent Proteins with a Large Stokes Shift</td>
+	</tr>
+<tr>
+		<td>7oin.1.A</td>
+		<td>84.04</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>1.40&Aring;</td>
+		<td>0.57</td>
+		<td>0.95</td>
+		<td>LSSmScarlet - Genetically Encoded Red Fluorescent Proteins with a Large Stokes Shift</td>
+	</tr>
+<tr>
+		<td>2v4e.1.C</td>
+		<td>82.41</td>
+		<td>homo-dimer</td>
+		<td>0.41</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.56</td>
+		<td>0.96</td>
+		<td>RED FLUORESCENT PROTEIN DRFP583</td>
+	</tr>
+<tr>
+		<td>2v4e.1.C</td>
+		<td>83.18</td>
+		<td>homo-dimer</td>
+		<td>0.42</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.56</td>
+		<td>0.95</td>
+		<td>RED FLUORESCENT PROTEIN DRFP583</td>
+	</tr>
+<tr>
+		<td>2v4e.1.B</td>
+		<td>82.41</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.56</td>
+		<td>0.96</td>
+		<td>RED FLUORESCENT PROTEIN DRFP583</td>
+	</tr>
+<tr>
+		<td>2v4e.1.B</td>
+		<td>83.18</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.56</td>
+		<td>0.95</td>
+		<td>RED FLUORESCENT PROTEIN DRFP583</td>
+	</tr>
+<tr>
+		<td>2v4e.1.A</td>
+		<td>82.87</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.56</td>
+		<td>0.96</td>
+		<td>RED FLUORESCENT PROTEIN DRFP583</td>
+	</tr>
+<tr>
+		<td>2v4e.1.A</td>
+		<td>83.64</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.57</td>
+		<td>0.95</td>
+		<td>RED FLUORESCENT PROTEIN DRFP583</td>
+	</tr>
+<tr>
+		<td>6b0b.1.B</td>
+		<td>94.12</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>3.28&Aring;</td>
+		<td>0.60</td>
+		<td>0.98</td>
+		<td>MCherry</td>
+	</tr>
+<tr>
+		<td>6bbo.1.B</td>
+		<td>94.95</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>3.43&Aring;</td>
+		<td>0.61</td>
+		<td>0.97</td>
+		<td>MCherry fluorescent protein</td>
+	</tr>
+<tr>
+		<td>6b0b.1.B</td>
+		<td>95.43</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>BLAST</td>
+		<td>X-ray</td>
+		<td>3.28&Aring;</td>
+		<td>0.61</td>
+		<td>0.97</td>
+		<td>MCherry</td>
+	</tr>
+<tr>
+		<td>6lr7.1.A</td>
+		<td>26.85</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.67&Aring;</td>
+		<td>0.35</td>
+		<td>0.96</td>
+		<td>Green fluorescient protein uv</td>
+	</tr>
+<tr>
+		<td>4ges.1.A</td>
+		<td>26.85</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>1.23&Aring;</td>
+		<td>0.35</td>
+		<td>0.96</td>
+		<td>Green fluorescent protein</td>
+	</tr>
+<tr>
+		<td>7bwn.1.A</td>
+		<td>26.51</td>
+		<td>monomer</td>
+		<td>-</td>
+		<td>HHblits</td>
+		<td>X-ray</td>
+		<td>2.40&Aring;</td>
+		<td>0.35</td>
+		<td>0.96</td>
+		<td>Chimera of Green fluorescent protein and p53dim</td>
+	</tr>
+</tbody>
+</table>
+
+
+<br>The table above shows the top 50 filtered templates. A further 771 templates were found which were considered to be less suitable for modelling than the filtered list.<br>
+1b9c.1.A, 1bfp.1.A, 1cv7.1.A, 1ema.1.A, 1emc.1.A, 1emf.1.A, 1emm.1.A, 1f09.1.A, 1g7k.1.A, 1gfl.1.A, 1h6r.1.A, 1hcj.1.A, 1huy.1.A, 1jby.1.A, 1jc0.1.A, 1kp5.1.A, 1kp5.2.A, 1kyp.1.A, 1mou.1.A, 1mov.1.A, 1myw.1.A, 1oxd.1.A, 1oxf.1.A, 1q4c.1.A, 1q4e.1.A, 1q73.1.A, 1qxt.1.A, 1qy3.1.A, 1qyf.1.A, 1qyo.1.A, 1qyq.1.A, 1rm9.1.A, 1rmo.1.A, 1rmp.1.A, 1rrx.1.A, 1uis.1.A, 1xa9.1.A, 1xmz.1.A, 1xmz.1.B, 1xqm.1.A, 1xss.1.A, 1yfp.1.A, 1yhg.1.A, 1yhh.1.A, 1yhi.1.A, 1yj2.1.A, 1yjf.1.A, 1yzw.1.A, 1zgp.1.A, 1zux.1.A, 2a46.1.A, 2a47.1.A, 2a48.1.A, 2a50.1.A, 2a50.1.B, 2a50.1.C, 2a52.1.B, 2a53.1.B, 2ah8.1.A, 2aha.1.A, 2arl.1.A, 2awj.1.A, 2awk.1.A, 2awl.1.A, 2awm.1.A, 2b3p.1.A, 2b3q.1.A, 2btj.1.A, 2btj.1.B, 2c9i.1.A, 2c9j.1.A, 2dd7.1.A, 2dd9.1.A, 2ddd.1.A, 2due.1.A, 2dug.1.A, 2fl1.1.A, 2fwq.1.A, 2fzu.1.A, 2g16.1.A, 2g16.1.B, 2g2s.1.A, 2g2s.1.B, 2g3d.1.B, 2g3o.1.A, 2g3o.1.B, 2g3o.2.A, 2g6x.1.A, 2gw3.1.A, 2gw4.1.A, 2gw4.1.B, 2gx0.1.A, 2h5o.1.A, 2h5q.1.A, 2h5r.1.A, 2h6v.1.A, 2h8q.1.A, 2h9w.1.A, 2hfc.1.A, 2hgy.1.A, 2hjo.1.A, 2hpw.1.A, 2hqk.1.A, 2hqz.1.A, 2hrs.1.A, 2ib5.1.A, 2icr.1.A, 2ie2.1.A, 2iov.1.A, 2iov.4.A, 2jad.1.A, 2ojk.1.A, 2ojk.2.A, 2okw.1.A, 2otb.1.A, 2otb.2.A, 2p4m.1.A, 2pxs.1.A, 2q57.1.A, 2q6p.1.A, 2qle.1.A, 2qlg.1.A, 2qli.1.A, 2qrf.1.A, 2qt2.1.A, 2qu1.1.A, 2qz0.1.A, 2rh7.1.A, 2vvh.1.A, 2vvj.1.A, 2vvj.1.B, 2vzx.1.A, 2whs.1.A, 2whs.2.A, 2wiq.1.A, 2wiq.1.B, 2wis.1.B, 2wsn.1.A, 2wso.1.A, 2wur.1.A, 2y0g.1.A, 2ydz.1.A, 2ye1.1.A, 2yfp.1.A, 2z6x.1.A, 2z6y.1.A, 2z6z.1.A, 2zmu.1.A, 2zmw.2.A, 2zo6.1.A, 2zo7.1.A, 3a8s.1.A, 3adf.1.A, 3ai4.1.A, 3ai5.1.A, 3ako.1.A, 3ako.1.B, 3ako.2.B, 3bx9.2.A, 3bxb.1.A, 3cb9.1.A, 3cd1.1.A, 3cfa.1.A, 3cfa.1.B, 3cff.1.B, 3cgl.1.A, 3cgl.2.B, 3dpw.1.A, 3e5t.1.A, 3e5v.1.A, 3e5w.1.A, 3ed8.1.A, 3ek4.1.A, 3ek8.1.A, 3ekh.1.A, 3ekj.1.A, 3evp.1.A, 3evr.1.A, 3evu.1.B, 3evv.1.A, 3g9a.1.A, 3gb3.1.B, 3gj1.1.A, 3gl4.1.A, 3gl4.1.B, 3h1o.1.A, 3i19.1.A, 3ip2.1.A, 3ir8.1.A, 3k1k.2.A, 3kbh.1.B, 3la1.1.A, 3lf3.1.A, 3lf4.1.A, 3lf4.1.B, 3ls3.1.A, 3lsa.4.A, 3lva.1.A, 3lvc.1.A, 3lvc.1.B, 3m22.1.A, 3m24.1.A, 3m24.2.A, 3mgf.1.A, 3mgf.4.A, 3ned.1.A, 3nez.1.A, 3nez.2.A, 3nf0.1.A, 3nt3.1.A, 3nt9.1.A, 3o77.1.A, 3o78.1.A, 3o78.2.A, 3ogo.1.A, 3ogo.3.A, 3osq.1.A, 3osr.1.A, 3p28.1.A, 3p8u.1.A, 3pib.1.A, 3pj5.1.A, 3pj7.1.A, 3pjb.1.A, 3rwa.1.A, 3rwt.1.A, 3s05.1.A, 3sg2.1.A, 3sg3.1.A, 3sg4.1.A, 3sg5.1.A, 3sg6.1.A, 3sg7.1.A, 3sry.1.A, 3ssp.1.A, 3st0.1.A, 3st2.1.A, 3st2.2.A, 3svn.1.A, 3svo.1.A, 3svu.1.A, 3tmr.1.A, 3u0k.1.A, 3u0l.1.A, 3u8a.1.A, 3u8p.1.A, 3u8p.2.A, 3u8p.3.A, 3ufz.1.A, 3v3d.1.A, 3vht.1.A, 3vht.1.B, 3vic.1.A, 3vk1.1.A, 3w1c.1.A, 3w1d.1.A, 3wck.1.A, 3wck.5.A, 3wlc.1.A, 3wld.1.A, 3ztf.1.A, 3zuf.1.A, 3zuj.1.A, 3zul.1.A, 4anj.1.A, 4ar7.1.A, 4as8.1.A, 4b30.1.A, 4bdu.1.A, 4dkm.1.A, 4dkn.1.A, 4dxi.1.A, 4dxm.1.A, 4dxo.1.A, 4dxp.1.A, 4dxq.1.D, 4edo.1.A, 4eds.1.A, 4emq.1.A, 4en1.1.A, 4eul.1.A, 4ges.1.A, 4gf6.1.A, 4h3l.1.A, 4h3m.1.A, 4h3n.1.A, 4h47.1.A, 4he4.1.A, 4hq8.1.A, 4hvf.1.A, 4i2y.1.A, 4i2y.2.A, 4ik1.1.A, 4ik3.1.A, 4ik4.1.A, 4ik5.1.A, 4izn.1.A, 4j88.1.A, 4j89.2.A, 4j8a.1.A, 4jc2.1.A, 4jeo.1.A, 4jfg.1.A, 4jfg.1.B, 4jfg.2.B, 4jfg.3.B, 4jfg.4.A, 4jrb.1.A, 4ka9.1.A, 4kag.1.A, 4kex.1.A, 4kf4.1.A, 4kf5.1.A, 4kf5.1.B, 4kf5.2.B, 4kge.1.A, 4kpi.1.A, 4kw4.1.A, 4l12.1.A, 4ljb.1.A, 4ljb.1.B, 4ljb.1.C, 4ljb.1.D, 4ljc.1.A, 4lqt.1.A, 4lqu.1.A, 4lw5.1.A, 4lw5.4.A, 4n3d.1.A, 4ndj.1.A, 4ndk.1.A, 4nws.1.A, 4ogs.1.A, 4ohs.1.A, 4oj0.1.A, 4oqw.1.A, 4oqw.3.A, 4oqw.5.A, 4oqw.6.A, 4oqw.7.A, 4oqw.8.A, 4orn.1.A, 4oy4.1.A, 4p1q.1.A, 4p76.1.A, 4p7h.1.A, 4p7h.2.A, 4pa0.1.A, 4pa0.2.A, 4pfe.1.A, 4pfe.1.B, 4ppj.1.A, 4ppk.1.A, 4ppl.1.A, 4q7r.1.A, 4q9w.1.A, 4q9w.2.A, 4r6b.1.A, 4r6d.1.A, 4rtc.1.A, 4rys.1.A, 4ryw.1.A, 4ryw.3.A, 4tza.1.A, 4tza.2.A, 4tzg.1.A, 4u2v.1.A, 4u2v.1.B, 4uts.1.A, 4w69.1.A, 4w6a.1.A, 4w6b.1.A, 4w6c.1.A, 4w6d.1.A, 4w6g.1.A, 4w6g.1.B, 4w6h.1.A, 4w6j.1.A, 4w6k.1.A, 4w6l.1.A, 4w6m.1.A, 4w6m.2.B, 4w6n.1.A, 4w6o.1.A, 4w6p.1.A, 4w6p.3.A, 4w6p.3.B, 4w6r.1.A, 4w6r.1.B, 4w6r.2.A, 4w6r.2.B, 4w6r.3.B, 4w6r.4.A, 4w6r.4.B, 4w6r.5.B, 4w6r.6.A, 4w6r.6.B, 4w6r.7.A, 4w6r.7.B, 4w6r.8.A, 4w6s.1.A, 4w6s.1.B, 4w6t.1.A, 4w6u.1.A, 4w72.1.A, 4w73.1.A, 4w75.1.A, 4w75.2.A, 4w77.1.A, 4w7a.1.A, 4w7c.2.B, 4w7d.1.A, 4w7e.1.A, 4w7f.1.A, 4w7r.1.A, 4xbi.1.A, 4xbi.2.A, 4xgy.1.A, 4xl5.1.A, 4xov.1.A, 4xow.1.A, 4xvp.3.A, 4z4k.1.A, 4z4k.1.B, 4z4m.1.A, 4zb1.1.A, 4zbl.1.A, 4zf3.1.A, 4zf4.1.A, 4zf5.1.A, 4zfs.1.A, 4zin.1.A, 5aqb.1.B, 5b61.1.A, 5bql.1.A, 5bql.1.B, 5bt0.1.A, 5bt0.2.A, 5btt.1.A, 5btt.2.A, 5dpg.1.A, 5dph.1.A, 5dph.2.A, 5dpi.1.A, 5dpj.1.A, 5dpj.2.A, 5dqm.1.A, 5dtl.1.A, 5dtx.1.A, 5dtz.1.A, 5dtz.3.A, 5du0.1.A, 5dy6.1.A, 5dy6.2.A, 5eb7.1.A, 5ebj.1.A, 5ehu.1.A, 5eju.1.A, 5exb.1.A, 5exb.1.B, 5exb.1.D, 5exb.2.C, 5exb.3.D, 5exb.4.C, 5exb.4.D, 5exc.1.A, 5exc.1.B, 5exc.1.C, 5exc.1.E, 5exc.1.F, 5exc.1.G, 5exc.1.H, 5exc.2.A, 5exc.2.B, 5exc.2.D, 5exc.2.E, 5exc.2.G, 5exc.2.H, 5exu.1.A, 5f9g.1.A, 5fgu.1.A, 5fhv.1.A, 5fvf.1.A, 5fvf.1.B, 5fvg.1.C, 5h87.1.A, 5h88.1.A, 5h89.1.A, 5hw9.1.B, 5hzo.1.A, 5hzt.1.A, 5hzt.11.A, 5j2o.1.A, 5j3n.1.A, 5j3n.1.B, 5jva.1.A, 5jzk.1.A, 5jzk.1.B, 5jzl.1.A, 5ktg.1.A, 5ktg.1.B, 5lel.1.C, 5lel.3.C, 5lem.1.C, 5ltp.1.A, 5ltq.1.A, 5ltr.1.A, 5ma3.1.A, 5ma4.1.A, 5ma5.1.A, 5ma6.1.A, 5ma8.1.B, 5ma9.2.B, 5mad.1.B, 5mad.2.B, 5mak.1.A, 5mak.2.A, 5mfc.1.B, 5mse.1.A, 5mwc.1.A, 5mwc.2.A, 5n9o.1.A, 5nhn.1.A, 5nhn.1.B, 5ni3.1.A, 5ni3.1.B, 5ni3.2.A, 5ooz.1.A, 5oq9.1.A, 5oqe.1.A, 5oxa.1.A, 5t3i.1.A, 5ukg.1.A, 5wj2.1.A, 5wj3.1.A, 5wj3.2.A, 5wj4.1.A, 5wts.1.A, 5wwk.1.A, 5wwk.2.A, 5wwk.3.A, 5wwk.4.A, 5wwk.5.A, 5wwk.6.A, 5y00.1.A, 5y8q.1.A, 5y8r.1.A, 5yr2.1.A, 5yr3.1.A, 5yt1.1.A, 5z6y.1.A, 6aa2.1.A, 6aa6.1.A, 6aa7.1.A, 6b7r.1.A, 6b7t.1.A, 6b9c.1.A, 6bbo.1.B, 6ciu.1.A, 6d38.1.A, 6d39.1.A, 6dej.1.A, 6dgv.1.A, 6dq0.1.A, 6dq1.1.A, 6efr.1.A, 6fll.1.A, 6fp7.1.A, 6fww.1.A, 6gel.1.A, 6gel.2.A, 6gez.1.A, 6gez.2.A, 6go8.1.A, 6goy.1.A, 6gp1.1.A, 6gp1.1.B, 6gqg.1.A, 6grm.1.A, 6h01.1.A, 6hr1.1.A, 6hr1.2.A, 6hut.1.A, 6ir1.1.A, 6ir2.1.A, 6ir6.1.A, 6ir7.1.A, 6itc.1.F, 6j1b.1.A, 6jc5.1.A, 6jgh.1.A, 6jgi.1.A, 6jgj.1.A, 6kl1.1.A, 6krg.1.A, 6l02.1.A, 6l27.1.A, 6lnp.1.A, 6lnp.2.A, 6lof.1.A, 6lof.1.B, 6lr7.1.A, 6lz2.1.A, 6m63.1.A, 6m9x.1.A, 6m9y.1.A, 6m9y.1.B, 6m9z.1.A, 6mb2.1.P, 6mdr.1.A, 6mdr.1.B, 6mwq.1.B, 6mxw.1.A, 6myb.1.A, 6mz3.1.A, 6nhv.1.A, 6nqj.1.A, 6nqs.1.A, 6ofk.1.A, 6ofn.1.A, 6ofn.2.A, 6ofo.1.A, 6og8.1.A, 6og8.2.A, 6ogb.1.A, 6per.1.A, 6pfr.1.A, 6pfs.1.A, 6qsl.1.A, 6qso.1.A, 6quh.1.A, 6quh.2.A, 6qui.1.A, 6s67.1.A, 6s68.1.A, 6sm0.1.A, 6t39.1.A, 6tv7.1.A, 6u1a.1.A, 6uhj.1.A, 6uhk.1.A, 6un4.1.A, 6un5.1.A, 6un7.1.B, 6uru.1.A, 6vio.1.A, 6wem.1.A, 6wv3.1.A, 6wv4.1.A, 6wv5.1.A, 6wv6.1.A, 6wv7.1.A, 6wv8.1.A, 6wvb.1.A, 6wvd.1.A, 6wve.1.A, 6wvf.1.A, 6wvg.1.A, 6wvi.1.A, 6wzn.1.A, 6xu4.1.A, 6xu4.2.A, 6xw2.1.A, 6xwy.1.A, 6xzf.1.A, 6y1g.1.A, 6ya9.1.A, 6ylm.1.A, 6ylo.1.A, 6yls.1.A, 6zqo.1.A, 6zsm.1.A, 6zui.1.A, 7a7k.1.A, 7a7l.1.A, 7a7m.1.A, 7a7o.1.A, 7a7q.1.A, 7a7s.1.A, 7a7u.1.A, 7a7v.1.A, 7a7w.1.A, 7a7y.1.A, 7a7z.1.A, 7a80.1.A, 7a81.1.A, 7a83.1.A, 7a85.1.A, 7a87.1.A, 7a88.1.A, 7a89.1.A, 7a8b.1.A, 7a8d.1.A, 7a8f.1.A, 7a8g.1.A, 7a8h.1.A, 7a8j.1.A, 7a8l.1.A, 7a8m.1.A, 7a8n.1.A, 7a8o.1.A, 7amb.1.A, 7amb.3.A, 7amu.1.A, 7aug.1.A, 7bhg.1.A, 7bwn.1.A, 7c03.1.A, 7cao.1.A, 7cd7.2.A, 7dig.1.A, 7dmx.1.A, 7dna.1.A, 7dnb.1.A, 7dnb.2.A, 7dnb.3.A, 7e53.1.A, 7e9y.1.A, 7fc3.1.A, 7km4.1.A, 7lg4.1.A, 7lqo.1.A, 7lug.1.A, 7o7c.1.A, 7o7d.1.A, 7o7e.1.A, 7pca.1.A, 7pcz.1.A, 7pcz.2.A, 7pd0.1.A, 7pd0.3.A, 7pnn.1.A, 7qgk.1.A, 7rha.1.A, 7rhb.1.A, 7rhd.1.A, 7rrh.1.A, 7rri.1.A, 7rrj.1.A, 7rrk.1.A, 7s7t.1.A, 7s7v.1.A, 7s7v.2.A, 7sah.1.A, 7saj.1.A, 7saj.5.A, 7sak.1.A, 7sal.1.A, 7sal.2.A, 7sf9.1.A, 7sf9.1.B, 7sf9.1.C, 7sf9.1.D, 7sfa.1.A, 7swr.1.A, 7sws.1.A, 7swt.1.A, 7swu.1.A, 7swu.1.B, 7ugr.1.A, 7ugs.1.A, 7ugt.1.A, 7vcm.1.A, 7y96.1.A, 7y96.1.B, 7yr5.1.A, 7z7o.1.A, 7z7p.1.A, 7z7q.1.A, 8aab.1.A, 8dpd.1.A
+ 
+
+
+	</div>
+	
+  <div id="sib_footer">			
+   <div id="sib_footer_content"> 
+       <a href="https://www.sib.swiss">Swiss Institute of Bioinformatics</a>
+       <a href="mailto:help-swissmodel@unibas.ch" style="margin-left:16px;">Contact Us</a>
+      <div id="sib_footer_right" style="float:right"></div>
+  	</div>
+	</div>
+  
+  <script src="../web/js/svgtocanvas.min.js"></script>
+  <script src="../web/js/jquery-3.6.0.min.js"></script>
+  <script src="../web/js/jquery.fancybox.pack.js"></script> 
+  <script src="../web/js/qmean.min.js"></script>
+  <script src="../web/js/raphael-min.js"></script>
+  <script>
+ var localQMEANNormImage='../web/images/qmean_norm.png';
+ var modelData = {
+   
+      "01":{
+        'qmean_local' : { 
+        "A":[null,null,null,null,null,0.73,0.85,0.87,0.82,0.82,0.86,0.87,0.85,0.9,0.84,0.87,0.82,0.86,0.86,0.9,0.91,0.92,0.89,0.89,0.89,0.88,0.91,0.87,0.89,0.84,0.88,0.83,0.89,0.85,0.9,0.85,0.92,0.9,0.89,0.93,0.92,0.88,0.89,0.89,0.83,0.86,0.84,0.89,0.88,0.86,0.89,0.91,0.92,0.93,0.95,0.94,0.96,0.92,0.94,0.95,0.94,0.94,0.95,0.9,0.54,0.5,0.43,0.58,0.94,0.88,0.95,0.92,0.94,0.89,0.89,0.87,0.83,0.83,0.89,0.92,0.92,0.91,0.91,0.9,0.91,0.92,0.91,0.89,0.84,0.93,0.89,0.88,0.88,0.86,0.84,0.88,0.88,0.9,0.92,0.89,0.91,0.93,0.92,0.9,0.9,0.89,0.89,0.89,0.85,0.9,0.92,0.89,0.88,0.79,0.79,0.86,0.84,0.9,0.89,0.91,0.86,0.84,0.86,0.9,0.85,0.91,0.88,0.88,0.91,0.92,0.86,0.88,0.91,0.94,0.95,0.91,0.87,0.9,0.89,0.92,0.9,0.95,0.91,0.87,0.9,0.85,0.87,0.85,0.84,0.89,0.9,0.9,0.86,0.85,0.87,0.89,0.91,0.89,0.92,0.85,0.86,0.85,0.87,0.85,0.93,0.89,0.91,0.85,0.83,0.87,0.91,0.91,0.93,0.92,0.94,0.88,0.91,0.88,0.9,0.89,0.86,0.86,0.89,0.86,0.84,0.83,0.87,0.84,0.89,0.92,0.91,0.91,0.89,0.86,0.89,0.88,0.88,0.86,0.9,0.9,0.89,0.89,0.87,0.85,0.83,0.77,0.84,0.89,0.89,0.87,0.88,0.85,0.85,0.9,0.87,0.84,0.93,0.88,0.91,0.82,0.8,0.79,null,null,null] },
+        'qmean_global':{"qmean4_norm_score":0.7909929812162573,"qmean4_z_score":0.28923063407036864,"qmean6_norm_score":0.7984204006590584,"qmean6_z_score":0.36484504423307174,"interaction_norm_score":-0.027888524196745586,"interaction_z_score":0.5849848512016573,"cbeta_norm_score":-0.01248336375558487,"cbeta_z_score":-0.23617609125236602,"packing_norm_score":-0.39679873873016147,"packing_z_score":0.3861202072893822,"torsion_norm_score":-0.35401651874554074,"torsion_z_score":0.17486084095957882,"ss_agreement_norm_score":0.8574817726208318,"ss_agreement_z_score":1.506867371657191,"acc_agreement_norm_score":0.5944700460829493,"acc_agreement_z_score":-0.7765501406754506,"avg_local_score":0.8768092810741435,"avg_local_score_error":0.058}
+      }
+    
+ }  
+
+
+ $(document).ready( function()
+   {  
+      drawQMEAN('01')
+   }) ;
+
+function drawQMEAN(id)
+{
+  var resCount = 0;
+  var local_scores = [];
+  for(chain in modelData[id].qmean_local)
+  {
+    var ls = {'chain':chain,'scores':[]};
+
+    for(var i=0; i<modelData[id].qmean_local[chain].length; i++)
+    {
+        ls['scores'].push([i, modelData[id].qmean_local[chain][i]]);
+        if(modelData[id].qmean_local[chain][i])
+          resCount++;
+    }
+    local_scores.push(ls);
+  }
+
+  $('#avgLocalScore_'+id)
+    .css({'background-color':
+          qmeanLocalColour(modelData[id].qmean_global.avg_local_score, .9),
+          'padding':'2px 8px 2px 8px',
+          'color':'white',
+          'border-radius':'1em',               
+          'display':'inline-block'});
+
+  drawQMEANLocal(local_scores, modelData[id].qmean_global.avg_local_score, id);
+
+  drawQMEANGlobal(modelData[id]['qmean_global'], resCount, id, false);
+
+  $('a[rel=lq-'+id+'],a[href="#qn-chart-'+id+'"]')
+    .fancybox(
+      {
+        padding:30, 
+        'cyclic':true,
+        'hideOnContentClick':true,
+        beforeShow:function(a,b)
+        {
+          var id = $(this.content[0]).first().attr('id');
+          if(id.indexOf('lq-chart')>-1)
+            $('#'+id).closest('.fancybox-outer').after(
+               '<a style="color:#666;float:right;" onclick="svgToPNG(\''+id+'\',\'Local_quality_estimate.png\');">&#128247; Save as PNG</a>'
+               );
+          else if(id.indexOf('qn-chart')>-1)
+            $('#'+id).after(
+               '<a style="color:#666;float:right;" onclick="svgToPNG(\''+id+'\',\'Quality_comparison.png\');">&#128247; Save as PNG</a>'
+               );
+        }
+      });
+}
+
+
+
+
+  </script>
+
+  </body>
+</html>
