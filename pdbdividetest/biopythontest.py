@@ -34,7 +34,7 @@ class ChainSelect(Select):
 
 chains = ['A','B','C']
 p = PDBParser(PERMISSIVE=1)       
-filename = "1XAE.pdb"
+filename = "2GX2.pdb"
 structure = p.get_structure(filename, filename)
 
 for chain in chains:
