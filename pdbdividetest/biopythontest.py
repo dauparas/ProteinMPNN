@@ -21,7 +21,7 @@ keywords = structure.header['keywords']
 
 from Bio.PDB import Select, PDBIO
 from Bio.PDB.PDBParser import PDBParser
-
+from Bio.PDB import parse_pdb_header
 class ChainSelect(Select):
     def __init__(self, chain):
         self.chain = chain
@@ -32,13 +32,25 @@ class ChainSelect(Select):
         else:          
             return 0
 
-chains = ['A','B','C']
+#chains = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 p = PDBParser(PERMISSIVE=1)       
-filename = "2GX2.pdb"
+filename = '2GX2.pdb'
 structure = p.get_structure(filename, filename)
+with open("2GX2.pdb","r") as handle:
+    header_dict = parse_pdb_header(handle)
 
-for chain in chains:
-    pdb_chain_file = 'pdb_file_chain_{}.pdb'.format(chain)                                 
+tmp = header_dict['compound']
+tmpp = tmp['1']
+kl = []
+#print(tmpp['chain'])
+
+for tmp in tmpp['chain']:
+    if(tmp<'a' or tmp>'z'):
+        continue
+    kl.append(tmp.upper())
+#print(kl)
+for chain in kl:
+    pdb_chain_file ='{}_{}.pdb'.format(filename,chain)                       
     io_w_no_h = PDBIO()               
     io_w_no_h.set_structure(structure)
     io_w_no_h.save('{}'.format(pdb_chain_file), ChainSelect(chain))
