@@ -1,3 +1,7 @@
+import glob
+
+PDB_DIR = "../RFP_designing/RFP_query/"
+
 '''
 from Bio.PDB import parse_pdb_header
 
@@ -34,6 +38,8 @@ class ChainSelect(Select):
 
 #chains = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 p = PDBParser(PERMISSIVE=1)       
+
+
 filename = '2GX2.pdb'
 structure = p.get_structure(filename, filename)
 with open("2GX2.pdb","r") as handle:
