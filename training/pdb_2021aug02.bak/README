@@ -1,0 +1,41 @@
+
+Training set for RosettaFold/MPNN etc.
+
+Each PDB entry is represented as a collection of .pt files:
+    PDBID_CHAINID.pt - contains CHAINID chain from PDBID
+    PDBID.pt         - metadata and information on biological assemblies
+
+PDBID_CHAINID.pt has the following fields:
+    seq  - amino acid sequence (string)
+    xyz  - atomic coordinates [L,14,3]
+    mask - boolean mask [L,14]
+    bfac - temperature factors [L,14]
+    occ  - occupancy [L,14] (is 1 for most atoms, <1 if alternative conformations are present)
+
+PDBID.pt:
+    method        - experimental method (str)
+    date          - deposition date (str)
+    resolution    - resolution (float)
+    chains        - list of CHAINIDs (there is a corresponding PDBID_CHAINID.pt file for each of these)
+    tm            - pairwise similarity between chains (TM-score,seq.id.,rmsd from TM-align) [num_chains,num_chains,3]
+    asmb_ids      - biounit IDs as in the PDB (list of str)
+    asmb_details  - how the assembly was identified: author, or software, or smth else (list of str)
+    asmb_method   - PISA or smth else (list of str)
+
+    asmb_chains    - list of chains which each biounit is composed of (list of str, each str contains comma separated CHAINIDs)
+    asmb_xformIDX  - (one per biounit) xforms to be applied to chains from asmb_chains[IDX], [n,4,4]
+                     [n,:3,:3] - rotation matrices
+                     [n,3,:3] - translation vectors
+
+list.csv:
+   CHAINID    - chain label, PDBID_CHAINID
+   DEPOSITION - deposition date
+   RESOLUTION - structure resolution
+   HASH       - unique 6-digit hash for the sequence
+   CLUSTER    - sequence cluster the chain belongs to (clusters were generated at seqID=30%)
+   SEQUENCE   - reference amino acid sequence
+
+
+valid_clusters.txt - clusters used for validation
+
+test_clusters.txt - clusters used for testing

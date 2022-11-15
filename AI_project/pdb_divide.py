@@ -8,6 +8,8 @@ PDB_DIR = "/mnt/P41/Repositories/ProteinMPNN/RFP_designing/RFP_query/"
 import os
 from Bio.PDB import *
 
+from tqdm import tqdm
+
 
 class FlatFile:
     # Instance variables
@@ -41,7 +43,9 @@ class FlatFile:
         f.close()
         self.lines = lines
 
-    def split_PDBfile_by_chains(self, output_dir=".", chains="all", all_sections=True):
+    def split_PDBfile_by_chains(
+        self, output_dir=".", chains="all", all_sections=True, log_file=None
+    ):
         """Split a pdb file in different pdb files by chains. data is a list of
         pdb file lines. chains must be a list of PDB ids (e.g. ['A', 'B'])
         """
@@ -110,7 +114,9 @@ class FlatFile:
             self.id.append((pdb_id, chain_id))
             self.path.append(sub_file_path)
 
-        os.remove(target_to_remove)
+        # os.remove(target_to_remove)
+        if log_file is not None:
+            log_file.write(f"{target_to_remove}\n")
 
 
 def main():
@@ -130,7 +136,8 @@ def main():
     # load multiple pdb files
     input_pdb = glob.glob(PDB_DIR + "*.pdb")
 
-    for pdb in input_pdb:
+    pdb_ids = open("./AI_project/input_preprocessing/mmtf_dataset.list", "w")
+    for pdb in tqdm(input_pdb):
         pdb_id = os.path.splitext(pathlib.Path(pdb).name)[0]
 
         f = FlatFile(path="./AI_project/input_preprocessing/")
@@ -140,10 +147,10 @@ def main():
         # chains = u.atoms.fragments
         # for ch in chains:
         #     print(ch)
-
         f.download_pdb(pdb_id)
         f.read_file()
-        f.split_PDBfile_by_chains(chains="all")
+        f.split_PDBfile_by_chains(chains="all", log_file=pdb_ids)
+    pdb_ids.close()
 
 
 if __name__ == "__main__":

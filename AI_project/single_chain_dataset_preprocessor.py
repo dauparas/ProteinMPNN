@@ -1,15 +1,21 @@
 import glob
+import os
+import pathlib
+import pickle
 
 import pandas as pd
+from mmtf import fetch
 
-import os
+from tqdm import tqdm
 
 PDB_DIR = "/mnt/P41/Repositories/ProteinMPNN/AI_project/input_preprocessing/"
 
 
 delete_list = []
-headers = []
 deviants = []
+
+headers = []
+targets = []
 for pdb in sorted(glob.glob(PDB_DIR + "*.pdb")):
     with open(pdb, "r") as p:
 
@@ -23,6 +29,8 @@ for pdb in sorted(glob.glob(PDB_DIR + "*.pdb")):
             # headers.append(temp[:1] + [temp[1]+"_"+temp[2]] + temp[3:])
             continue
         headers.append(temp)
+        targets.append(os.path.splitext(pathlib.Path(pdb).name)[0].split("_")[0])
+
 
 # 1st removal
 while len(delete_list) > 0:
@@ -47,3 +55,25 @@ for i, row in df.iterrows():
 for fname in os.listdir(PDB_DIR):
     if fname.split("_")[0] in set(delete_list):
         os.remove(os.path.join(PDB_DIR, fname))
+
+
+# for mmtf
+s = set(targets)
+output = []
+for pdb in tqdm(s):
+    try:
+        decoded_data = fetch(pdb)
+        print(
+            "PDB Code: "
+            + str(decoded_data.structure_id)
+            + " has "
+            + str(decoded_data.num_chains)
+            + " chains"
+        )
+        for chain in set(decoded_data.chain_name_list):
+            output.append(f"{pdb.lower()}{chain}")
+    except Exception as e:
+        print(e)
+
+with open("mmtf_dataset.list", "w") as f:
+    f.writelines([f"{t}\n" for t in output])
