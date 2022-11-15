@@ -44,7 +44,7 @@ for item in headers:
 df = pd.DataFrame(headers, columns=["HEADER", "PROTEIN1", "PROTEIN2", "DATE", "ID"])
 print(df.head())
 
-# print(df.groupby(["PROTEIN1"]).count())
+print(df.groupby(["PROTEIN1"]).count())
 
 for i, row in df.iterrows():
     if row["PROTEIN1"] in ["FLUORESCENT", "LUMINESCENT"]:

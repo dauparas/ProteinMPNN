@@ -116,7 +116,7 @@ class FlatFile:
 
         # os.remove(target_to_remove)
         if log_file is not None:
-            log_file.write(f"{target_to_remove}\n")
+            log_file.write(f"{pathlib.Path(target_to_remove).name[3:7]}\n")
 
 
 def main():
