@@ -1,10 +1,15 @@
 import glob
 import os
 import pathlib
+import pandas as pd
+
+from tqdm import tqdm
 
 PDB_PATH = "/mnt/P41/Repositories/ProteinMPNN/training/pdb_2021aug02/pdb/"
 
 match = 0
+
+target_pdbids = []
 with open("/mnt/P41/Repositories/ProteinMPNN/training/mmtf_dataset.list", "r") as f:
     targets = f.read().split("\n")[:-1]  # remove last empty line
     target_pdbids = [*set([t[:4].lower() for t in targets])]
@@ -78,3 +83,23 @@ removeEmptyFolders(PDB_PATH, False)
 
 
 # Modify list.csv for give dataset information to the model training function
+df = pd.read_csv(
+    "/mnt/P41/Repositories/ProteinMPNN/training/pdb_2021aug02/list.csv", index_col=False
+)
+
+# print(df.describe())
+# print(df.head())
+
+hits = []
+for idx, row in tqdm(df.iterrows()):
+    if row["CHAINID"][:4].lower() in [t.lower() for t in target_pdbids]:
+        # print(row)
+        hits.append(row)
+    else:
+        df.drop(idx, inplace=True)
+
+df.to_csv(
+    "/mnt/P41/Repositories/ProteinMPNN/training/pdb_2021aug02/list_filtered.csv",
+    index=False,
+)
+print()
