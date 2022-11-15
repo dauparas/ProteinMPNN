@@ -322,6 +322,7 @@ class ProteinFeatures(nn.Module):
         return D_neighbors, E_idx
 
     def _rbf(self, D):
+        # Gaussian kernel
         device = D.device
         D_min, D_max, D_count = 2., 22., self.num_rbf
         D_mu = torch.linspace(D_min, D_max, D_count, device=device)
@@ -338,6 +339,7 @@ class ProteinFeatures(nn.Module):
         return RBF_A_B
 
     def forward(self, X, mask, residue_idx, chain_labels):
+        # Get Gaussian radial basis functions (RBFs)
         if self.training and self.augment_eps > 0:
             X = X + self.augment_eps * torch.randn_like(X)
         

@@ -1,6 +1,8 @@
 import argparse
 import os.path
 
+# import plotter
+
 
 def main(args):
     import json, time, os, sys, glob
@@ -132,6 +134,11 @@ def main(args):
         # error None
         # optimizer.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         pass
+
+    train_perplexity_history = []
+    validation_perplexity_history = []
+    train_accuracy_history = []
+    validation_accuracy_history = []
 
     with ProcessPoolExecutor(max_workers=12) as executor:
         # for MC CV
@@ -350,6 +357,12 @@ def main(args):
                     f"epoch: {e+1}, step: {total_step}, time: {dt}, train: {train_perplexity_}, valid: {validation_perplexity_}, train_acc: {train_accuracy_}, valid_acc: {validation_accuracy_}"
                 )
 
+                # for plotting the history
+                # train_perplexity_history.append(train_perplexity_)
+                # validation_perplexity_history.append(validation_perplexity_)
+                # train_accuracy_history.append(train_accuracy_)
+                # validation_accuracy_history.append(validation_accuracy_)
+
                 checkpoint_filename_last = (
                     base_folder
                     + "model_weights/epoch_last.pt".format(e + 1, total_step)
@@ -383,7 +396,9 @@ def main(args):
                         checkpoint_filename,
                     )
         # train and validation visualization
+        # => jupyter notebook
     # testing
+    # inference on testing dataset
 
 
 if __name__ == "__main__":
