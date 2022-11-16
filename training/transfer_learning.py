@@ -404,20 +404,20 @@ def main(args, tb):
 
             # VISUALIZATION OF THE IMPORTATNT TRAINABLE VARIABLES
             if args.fixed_network_transfer_learning:
-                # TODO
-                tb.add_histogram(
-                    "final_log_prob_out.bias", model_final_classifier.W_out.bias, epoch
-                )
+                
                 tb.add_histogram(
                     "final_log_prob_out.weight",
                     model_final_classifier.W_out.weight,
                     epoch,
                 )
+                tb.add_histogram(
+                    "final_log_prob_out.bias", model_final_classifier.W_out.bias, epoch
+                )
 
             else:
                 # Enc
                 tb.add_histogram(
-                    "last_enc_positionalFF_out.bias",
+                    "last_enc_positionalFF_out.weight",
                     model.encoder_layers[-1].dense.W_out.weight,
                     epoch,
                 )
@@ -428,7 +428,7 @@ def main(args, tb):
                 )
                 # Dec
                 tb.add_histogram(
-                    "last_dec_positionalFF_out.bias",
+                    "last_dec_positionalFF_out.weight",
                     model.decoder_layers[-1].dense.W_out.weight,
                     epoch,
                 )
