@@ -30,7 +30,14 @@ def main(args):
         StructureDataset,
         StructureLoader,
     )
-    from model_utils import featurize, loss_smoothed, loss_nll, get_std_opt, ProteinMPNN
+    from model_utils import (
+        featurize,
+        loss_smoothed,
+        loss_nll,
+        get_std_opt,
+        ProteinMPNN,
+        ProteinMPNN_FixedRFP,
+    )
 
     scaler = torch.cuda.amp.GradScaler()
 
@@ -74,6 +81,11 @@ def main(args):
         "num_workers": 4,
     }
 
+    if args.fixed_network_transfer_learning == "True":
+        args.fixed_network_transfer_learning = True
+    else:
+        args.fixed_network_transfer_learning = False
+
     if args.debug:
         args.num_examples_per_epoch = 50
         args.max_protein_length = 1000
@@ -110,6 +122,12 @@ def main(args):
     )
     model.to(device)
 
+    if args.fixed_network_transfer_learning:
+        model_final_classifier = ProteinMPNN_FixedRFP(
+            hidden_dim=args.hidden_dim,
+            dropout=args.dropout,
+        )
+
     if PATH:
         # Transfer learning from a previous checkpoint
         checkpoint = torch.load(PATH)
@@ -122,12 +140,22 @@ def main(args):
         # epoch = checkpoint["epoch"] if checkpoint["step"] else 0  # write epoch from the checkpoint
         model.load_state_dict(checkpoint["model_state_dict"])
 
+        # fixed network TL
+        if args.fixed_network_transfer_learning:
+            for param in model.parameters():
+                param.requires_grad = False
+
         trasnfer_epoch = 0
     else:
         total_step = 0
         epoch = 0
 
-    optimizer = get_std_opt(model.parameters(), args.hidden_dim, total_step)
+    if args.fixed_network_transfer_learning:
+        optimizer = get_std_opt(
+            model_final_classifier.parameters, args.hidden_dim, total_step
+        )
+    else:
+        optimizer = get_std_opt(model.parameters(), args.hidden_dim, total_step)
 
     if PATH:
         # DEV
@@ -135,10 +163,10 @@ def main(args):
         # optimizer.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         pass
 
-    train_perplexity_history = []
-    validation_perplexity_history = []
-    train_accuracy_history = []
-    validation_accuracy_history = []
+    # train_perplexity_history = []
+    # validation_perplexity_history = []
+    # train_accuracy_history = []
+    # validation_accuracy_history = []
 
     with ProcessPoolExecutor(max_workers=12) as executor:
         for e in range(args.num_epochs):
@@ -190,10 +218,12 @@ def main(args):
 
             reload_c = 0
 
-            
             t0 = time.time()
             e = epoch + e
-            model.train()
+            if args.fixed_network_transfer_learning:
+                model_final_classifier.train()
+            else:
+                model.train()
             train_sum, train_weights = 0.0, 0.0
             train_acc = 0.0
             # For each epoch, train and valid dataset are resampled without replacement
@@ -257,16 +287,22 @@ def main(args):
                         log_probs = model(
                             X, S, mask, chain_M, residue_idx, chain_encoding_all
                         )
-                        _, loss_av_smoothed = loss_smoothed(
-                            S, log_probs, mask_for_loss
-                        )
+                        if args.fixed_network_transfer_learning:
+                            log_probs = model_final_classifier(log_probs)
+
+                        _, loss_av_smoothed = loss_smoothed(S, log_probs, mask_for_loss)
 
                     scaler.scale(loss_av_smoothed).backward()
 
                     if args.gradient_norm > 0.0:
-                        total_norm = torch.nn.utils.clip_grad_norm_(
-                            model.parameters(), args.gradient_norm
-                        )
+                        if args.fixed_network_transfer_learning:
+                            total_norm = torch.nn.utils.clip_grad_norm_(
+                                model_final_classifier.parameters(), args.gradient_norm
+                            )
+                        else:
+                            total_norm = torch.nn.utils.clip_grad_norm_(
+                                model.parameters(), args.gradient_norm
+                            )
 
                     scaler.step(optimizer)
                     scaler.update()
@@ -274,27 +310,36 @@ def main(args):
                     log_probs = model(
                         X, S, mask, chain_M, residue_idx, chain_encoding_all
                     )
+                    if args.fixed_network_transfer_learning:
+                        log_probs = model_final_classifier(log_probs)
+
                     _, loss_av_smoothed = loss_smoothed(S, log_probs, mask_for_loss)
                     loss_av_smoothed.backward()
 
                     if args.gradient_norm > 0.0:
-                        total_norm = torch.nn.utils.clip_grad_norm_(
-                            model.parameters(), args.gradient_norm
-                        )
+                        if args.fixed_network_transfer_learning:
+                            total_norm = torch.nn.utils.clip_grad_norm_(
+                                model_final_classifier.parameters(), args.gradient_norm
+                            )
+                        else:
+                            total_norm = torch.nn.utils.clip_grad_norm_(
+                                model.parameters(), args.gradient_norm
+                            )
 
                     optimizer.step()
 
                 loss, loss_av, true_false = loss_nll(S, log_probs, mask_for_loss)
 
                 train_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
-                train_acc += (
-                    torch.sum(true_false * mask_for_loss).cpu().data.numpy()
-                )
+                train_acc += torch.sum(true_false * mask_for_loss).cpu().data.numpy()
                 train_weights += torch.sum(mask_for_loss).cpu().data.numpy()
 
                 total_step += 1
 
-            model.eval()
+            if args.fixed_network_transfer_learning:
+                model_final_classifier.eval()
+            else:
+                model.eval()
             with torch.no_grad():
                 validation_sum, validation_weights = 0.0, 0.0
                 validation_acc = 0.0
@@ -312,20 +357,16 @@ def main(args):
                     log_probs = model(
                         X, S, mask, chain_M, residue_idx, chain_encoding_all
                     )
+                    if args.fixed_network_transfer_learning:
+                        log_probs = model_final_classifier(log_probs)
                     mask_for_loss = mask * chain_M
-                    loss, loss_av, true_false = loss_nll(
-                        S, log_probs, mask_for_loss
-                    )
+                    loss, loss_av, true_false = loss_nll(S, log_probs, mask_for_loss)
 
-                    validation_sum += (
-                        torch.sum(loss * mask_for_loss).cpu().data.numpy()
-                    )
+                    validation_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
                     validation_acc += (
                         torch.sum(true_false * mask_for_loss).cpu().data.numpy()
                     )
-                    validation_weights += (
-                        torch.sum(mask_for_loss).cpu().data.numpy()
-                    )
+                    validation_weights += torch.sum(mask_for_loss).cpu().data.numpy()
 
             train_loss = train_sum / train_weights
             train_accuracy = train_acc / train_weights
@@ -366,8 +407,7 @@ def main(args):
             # validation_accuracy_history.append(validation_accuracy_)
 
             checkpoint_filename_last = (
-                base_folder
-                + "model_weights/epoch_last.pt".format(e + 1, total_step)
+                base_folder + "model_weights/epoch_last.pt".format(e + 1, total_step)
             )
             torch.save(
                 {
@@ -498,6 +538,12 @@ if __name__ == "__main__":
     # argparser.add_argument(
     #     "--num_cross_validation", type=int, default=5, help="Monte Carlo CV counts"
     # ) # for every epoch
-    
+    argparser.add_argument(
+        "--fixed_network_transfer_learning",
+        type=bool,
+        default=False,
+        help="train with fixed network weights",
+    )
+
     args = argparser.parse_args()
     main(args)
