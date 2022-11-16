@@ -2,9 +2,10 @@ import argparse
 import os.path
 
 # import plotter
+from torch.utils.tensorboard import SummaryWriter  # for vis
 
 
-def main(args):
+def main(args, tb):
     import json, time, os, sys, glob
     import shutil
     import warnings
@@ -16,6 +17,7 @@ def main(args):
     import copy
     import torch.nn as nn
     import torch.nn.functional as F
+
     import random
     import os.path
     import subprocess
@@ -50,14 +52,15 @@ def main(args):
         base_folder += "/"
     if not os.path.exists(base_folder):
         os.makedirs(base_folder)
-    subfolders = ["model_weights"]
+    subfolders = ["model_weights", "parameter_logs"]
     for subfolder in subfolders:
         if not os.path.exists(base_folder + subfolder):
             os.makedirs(base_folder + subfolder)
 
     PATH = args.previous_checkpoint
 
-    logfile = base_folder + "log.txt"
+    logfile = base_folder + "log.txt"  # for plotting
+
     if not PATH:
         with open(logfile, "w") as f:
             f.write("Epoch\tTrain\tValidation\n")
@@ -226,46 +229,7 @@ def main(args):
                 model.train()
             train_sum, train_weights = 0.0, 0.0
             train_acc = 0.0
-            # For each epoch, train and valid dataset are resampled without replacement
-            # if e % args.reload_data_every_n_epochs == 0:
-            #     if reload_c != 0:
-            #         pdb_dict_train = q.get().result()
-            #         dataset_train = StructureDataset(
-            #             pdb_dict_train,
-            #             truncate=None,
-            #             max_length=args.max_protein_length,
-            #         )
-            #         loader_train = StructureLoader(
-            #             dataset_train, batch_size=args.batch_size
-            #         )
-            #         pdb_dict_valid = p.get().result()
-            #         dataset_valid = StructureDataset(
-            #             pdb_dict_valid,
-            #             truncate=None,
-            #             max_length=args.max_protein_length,
-            #         )
-            #         loader_valid = StructureLoader(
-            #             dataset_valid, batch_size=args.batch_size
-            #         )
-            #         q.put_nowait(
-            #             executor.submit(
-            #                 get_pdbs,
-            #                 train_loader,
-            #                 1,
-            #                 args.max_protein_length,
-            #                 args.num_examples_per_epoch,
-            #             )
-            #         )
-            #         p.put_nowait(
-            #             executor.submit(
-            #                 get_pdbs,
-            #                 valid_loader,
-            #                 1,
-            #                 args.max_protein_length,
-            #                 args.num_examples_per_epoch,
-            #             )
-            #         )
-            #     reload_c += 1
+
             for _, batch in enumerate(loader_train):
                 start_batch = time.time()
                 (
@@ -437,6 +401,43 @@ def main(args):
                     },
                     checkpoint_filename,
                 )
+
+            # VISUALIZATION OF THE IMPORTATNT TRAINABLE VARIABLES
+            if args.fixed_network_transfer_learning:
+                # TODO
+                tb.add_histogram(
+                    "final_log_prob_out.bias", model_final_classifier.W_out.bias, epoch
+                )
+                tb.add_histogram(
+                    "final_log_prob_out.weight",
+                    model_final_classifier.W_out.weight,
+                    epoch,
+                )
+
+            else:
+                # Enc
+                tb.add_histogram(
+                    "last_enc_positionalFF_out.bias",
+                    model.encoder_layers[-1].dense.W_out.weight,
+                    epoch,
+                )
+                tb.add_histogram(
+                    "last_enc_positionalFF_out.bias",
+                    model.encoder_layers[-1].dense.W_out.bias,
+                    epoch,
+                )
+                # Dec
+                tb.add_histogram(
+                    "last_dec_positionalFF_out.bias",
+                    model.decoder_layers[-1].dense.W_out.weight,
+                    epoch,
+                )
+                tb.add_histogram(
+                    "last_dec_positionalFF_out.bias",
+                    model.decoder_layers[-1].dense.W_out.bias,
+                    epoch,
+                )
+
         # train and validation visualization
         # => jupyter notebook
     # testing
@@ -546,4 +547,7 @@ if __name__ == "__main__":
     )
 
     args = argparser.parse_args()
-    main(args)
+
+    tb = SummaryWriter()
+    main(args, tb)
+    tb.close()
