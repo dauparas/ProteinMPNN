@@ -15,6 +15,27 @@ import itertools
 
 #A number of functions/classes are adopted from: https://github.com/jingraham/neurips19-graph-protein-design
 
+def parse_fasta(filename,limit=-1, omit=[]):
+    header = []
+    sequence = []
+    lines = open(filename, "r")
+    for line in lines:
+        line = line.rstrip()
+        if line[0] == ">":
+            if len(header) == limit:
+                break
+            header.append(line[1:])
+            sequence.append([])
+        else:
+            if omit:
+                line = [item for item in line if item not in omit]
+                line = ''.join(line)
+            line = ''.join(line)
+            sequence[-1].append(line)
+    lines.close()
+    sequence = [''.join(seq) for seq in sequence]
+    return np.array(header), np.array(sequence)
+
 def _scores(S, log_probs, mask):
     """ Negative log probabilities """
     criterion = torch.nn.NLLLoss(reduction='none')
@@ -193,16 +214,15 @@ def tied_featurize(batch, device, chain_dict, fixed_position_dict=None, omit_AA_
     masked_list_list = []
     masked_chain_length_list_list = []
     tied_pos_list_of_lists_list = []
-    #shuffle all chains before the main loop
     for i, b in enumerate(batch):
         if chain_dict != None:
             masked_chains, visible_chains = chain_dict[b['name']] #masked_chains a list of chain letters to predict [A, D, F]
         else:
             masked_chains = [item[-1:] for item in list(b) if item[:10]=='seq_chain_']
             visible_chains = []
-        num_chains = b['num_of_chains']
+        masked_chains.sort() #sort masked_chains 
+        visible_chains.sort() #sort visible_chains 
         all_chains = masked_chains + visible_chains
-        #random.shuffle(all_chains)
     for i, b in enumerate(batch):
         mask_dict = {}
         a = 0
@@ -474,7 +494,8 @@ class StructureDataset():
                     else:
                         discard_count['too_long'] += 1
                 else:
-                    print(name, bad_chars, entry['seq'])
+                    if verbose:
+                        print(name, bad_chars, entry['seq'])
                     discard_count['bad_chars'] += 1
 
                 # Truncate early
@@ -484,8 +505,8 @@ class StructureDataset():
                 if verbose and (i + 1) % 1000 == 0:
                     elapsed = time.time() - start
                     print('{} entries ({} loaded) in {:.1f} s'.format(len(self.data), i+1, elapsed))
-
-            print('discarded', discard_count)
+            if verbose:
+                print('discarded', discard_count)
     def __len__(self):
         return len(self.data)
 

@@ -21,11 +21,13 @@ Code organization:
 -----------------------------------------------------------------------------------------------------
 Input flags for `protein_mpnn_run.py`:
 ```
+    argparser.add_argument("--suppress_print", type=int, default=0, help="0 for False, 1 for True")
     argparser.add_argument("--ca_only", action="store_true", default=False, help="Parse CA-only structures and use CA-only models (default: false)")
     argparser.add_argument("--path_to_model_weights", type=str, default="", help="Path to model weights folder;")
     argparser.add_argument("--model_name", type=str, default="v_48_020", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020, v_48_030; v_48_010=version with 48 edges 0.10A noise")
     argparser.add_argument("--seed", type=int, default=0, help="If set to 0 then a random seed will be picked;")
     argparser.add_argument("--save_score", type=int, default=0, help="0 for False, 1 for True; save score=-log_prob to npy files")
+    argparser.add_argument("--path_to_fasta", type=str, default="", help="score provided input sequence in a fasta format; e.g. GGGGGG/PPPPS/WWW for chains A, B, C sorted alphabetically and separated by /")
     argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilites per position")
     argparser.add_argument("--score_only", type=int, default=0, help="0 for False, 1 for True; score input backbone-sequence pairs")
     argparser.add_argument("--conditional_probs_only", type=int, default=0, help="0 for False, 1 for True; output conditional probabilities p(s_i given the rest of the sequence and backbone)")
@@ -65,6 +67,7 @@ These are provided `examples/`:
 * `submit_example_2.sh` - simple multi-chain example
 * `submit_example_3.sh` - directly from the .pdb path
 * `submit_example_3_score_only.sh` - return score only (model's uncertainty)
+* `submit_example_3_score_only_from_fasta.sh` - return score only (model's uncertainty) loading sequence from fasta files
 * `submit_example_4.sh` - fix some residue positions
 * `submit_example_4_non_fixed.sh` - specify which positions to design
 * `submit_example_5.sh` - tie some positions together (symmetry)
