@@ -28,10 +28,10 @@ def main(args):
 
     torch.manual_seed(seed)
     random.seed(seed)
-    np.random.seed(seed)   
+    np.random.seed(seed)
     
     hidden_dim = 128
-    num_layers = 3 
+    num_layers= 3 
   
 
     if args.path_to_model_weights:
@@ -40,7 +40,7 @@ def main(args):
             model_folder_path = model_folder_path + '/'
     else: 
         file_path = os.path.realpath(__file__)
-        k = file_path.rfind("/")
+        k = file_path.rfind("/") 
         if args.ca_only:
             model_folder_path = file_path[:k] + '/ca_model_weights/'
         else:
