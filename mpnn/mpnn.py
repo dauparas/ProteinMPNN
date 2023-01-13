@@ -3,8 +3,6 @@ from ..protein_mpnn_run import main as mpnn_main
 from ..helper_scripts.parse_multiple_chains import main as parse_multiple_chains
 from ..helper_scripts.assign_fixed_chains import main as assign_fixed_chains
 from ..helper_scripts.make_fixed_positions_dict import main as make_fixed_positions
-
-## Don't need omitAA script
 from ..helper_scripts.make_bias_AA import main as make_bias_AA
 from ..helper_scripts.make_tied_positions_dict import main as make_tied_positions
 from ..helper_scripts.make_bias_per_res_dict import main as make_bias_per_res
@@ -106,3 +104,6 @@ class MPNN:
     def execute(self):
         """Execute the MPNN"""
         mpnn_main(self.args)
+
+        # Read the self.temp_output_folder for the output pose(s)
+        # Return the pose(s) as a list
