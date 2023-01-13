@@ -12,6 +12,11 @@ from collections import namedtuple
 from collections.abc import Iterable
 import tempfile
 
+Args = namedtuple(
+    "args",
+    "out_folder pdb_path jsonl_path chain_id_jsonl fixed_positions_jsonl omit_AAs bias_AA_jsonl tied_positions_jsonl bias_by_res_jsonl omit_AA_jsonl suppress_print ca_only path_to_model_weights model_name seed save_score save_probs score_only conditional_probs_only conditional_probs_only_backbone unconditional_probs_only pssm_multi pssm_threshold pssm_log_odds_flag pssm_bias_flag backbone_noise num_seq_per_target batch_size max_length sampling_temp pssm_jsonl path_to_fasta pdb_path_chains",
+)
+
 
 class MPNN:
     def __init__(
@@ -28,10 +33,7 @@ class MPNN:
 
         # ugh
         # Blame the bad design of the MPNN code
-        self.args = namedtuple(
-            "args",
-            "out_folder pdb_path jsonl_path chain_id_jsonl fixed_positions_jsonl omit_AAs bias_AA_jsonl tied_positions_jsonl bias_by_res_jsonl omit_AA_jsonl suppress_print ca_only path_to_model_weights model_name seed save_score save_probs score_only conditional_probs_only conditional_probs_only_backbone unconditional_probs_only pssm_multi pssm_threshold pssm_log_odds_flag pssm_bias_flag backbone_noise num_seq_per_target batch_size max_length sampling_temp pssm_jsonl path_to_fasta pdb_path_chains",
-        )
+        self.args = Args()
 
         ## Standard Options we aren't changing
         self.args.suppress_print = 0
