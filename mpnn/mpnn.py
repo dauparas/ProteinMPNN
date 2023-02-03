@@ -14,6 +14,7 @@ from pyrosetta.rosetta.core.pose import get_resnums_for_chain, setPoseExtraScore
 from pyrosetta.rosetta.core.kinematics import MoveMap
 from pyrosetta.distributed import packed_pose
 from collections import namedtuple
+from typing import Union, List
 import tempfile
 import glob
 import re
@@ -22,17 +23,17 @@ import re
 class MPNN(Task):
     def __init__(
         self,
-        poses,
-        nstruct=1,
-        designable_chains="",
-        fixed_positions="",
-        omit_AAs=[],
-        bias_AA={},
-        tied_positions="",
+        poses: Union(list, packed_pose.PackedPose),
+        nstruct: int = 1,
+        designable_chains: str = "",
+        fixed_positions: str = "",
+        omit_AAs: list = [],
+        bias_AA: dict = {},
+        tied_positions: str = "",
         homooligomer=False,
-        sampling_temp=0.3,
+        sampling_temp: float = 0.3,
         repack_neighbors=True,
-        name="MPNN_Run",
+        name: str = "MPNN_Run",
     ):
         """Initialize the MPNN settings
 
@@ -197,7 +198,7 @@ class MPNN(Task):
             self.logger.debug(file)
             self.logger.debug(open(file).read())
 
-    def execute(self):
+    def execute(self) -> List[packed_pose.PackedPose]:
         """Execute the MPNN"""
         mpnn_main(self.args)
 
@@ -261,15 +262,15 @@ class FastDesign_MPNN(Task):
 
     def __init__(
         self,
-        pose,
-        cycles=3,
-        nstruct_per_cycle=5,
-        select_top=2,
-        designable_chains="",
-        movable_chains="",
-        fixed_positions="",
-        movable_residues="",
-        name="FastDesign_MPNN",
+        pose: packed_pose.PackedPose,
+        cycles: int = 3,
+        nstruct_per_cycle: int = 5,
+        select_top: int = 2,
+        designable_chains: str = "",
+        movable_chains: str = "",
+        fixed_positions: str = "",
+        movable_residues: str = "",
+        name: str = "FastDesign_MPNN",
         **mpnn_args,
     ):
         """Initialize the FastDesign_MPNN Task
@@ -323,7 +324,7 @@ class FastDesign_MPNN(Task):
                 raise ValueError(f"Key {key} not allowed in mpnn_args")
         self.mpnn_args = mpnn_args
 
-    def execute(self):
+    def execute(self) -> List[packed_pose.PackedPose]:
 
         n_cycles = 3
         for _ in range(n_cycles):
