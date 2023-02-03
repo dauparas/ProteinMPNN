@@ -23,7 +23,7 @@ import re
 class MPNN(Task):
     def __init__(
         self,
-        poses: Union(list, packed_pose.PackedPose),
+        poses: Union[list, packed_pose.PackedPose],
         nstruct: int = 1,
         designable_chains: str = "",
         fixed_positions: str = "",
