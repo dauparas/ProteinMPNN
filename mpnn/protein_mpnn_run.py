@@ -19,20 +19,46 @@ def main(args):
     import os.path
     import subprocess
 
-    from .protein_mpnn_utils import (
-        loss_nll,
-        loss_smoothed,
-        gather_edges,
-        gather_nodes,
-        gather_nodes_t,
-        cat_neighbors_nodes,
-        _scores,
-        _S_to_seq,
-        tied_featurize,
-        parse_PDB,
-        parse_fasta,
-    )
-    from .protein_mpnn_utils import StructureDataset, StructureDatasetPDB, ProteinMPNN
+    # When using the packaged version, you need the package import (.protein...)
+    # When using the standalone script you need the relative import (protein...)
+    try:
+        from .protein_mpnn_utils import (
+            loss_nll,
+            loss_smoothed,
+            gather_edges,
+            gather_nodes,
+            gather_nodes_t,
+            cat_neighbors_nodes,
+            _scores,
+            _S_to_seq,
+            tied_featurize,
+            parse_PDB,
+            parse_fasta,
+        )
+        from .protein_mpnn_utils import (
+            StructureDataset,
+            StructureDatasetPDB,
+            ProteinMPNN,
+        )
+    except ImportError:
+        from protein_mpnn_utils import (
+            loss_nll,
+            loss_smoothed,
+            gather_edges,
+            gather_nodes,
+            gather_nodes_t,
+            cat_neighbors_nodes,
+            _scores,
+            _S_to_seq,
+            tied_featurize,
+            parse_PDB,
+            parse_fasta,
+        )
+        from protein_mpnn_utils import (
+            StructureDataset,
+            StructureDatasetPDB,
+            ProteinMPNN,
+        )
 
     if args.seed:
         seed = args.seed
