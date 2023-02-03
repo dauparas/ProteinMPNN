@@ -7,6 +7,7 @@ from .helper_scripts.make_fixed_positions_dict import main as make_fixed_positio
 from .helper_scripts.make_bias_AA import main as make_bias_AA
 from .helper_scripts.make_tied_positions_dict import main as make_tied_positions
 
+from opbdesign.core.cluster import Task
 from pyrosetta.rosetta.protocols.simple_moves import SimpleThreadingMover
 from pyrosetta.rosetta.protocols.minimization_packing import MinMover
 from pyrosetta.rosetta.core.pose import get_resnums_for_chain, setPoseExtraScore
@@ -18,7 +19,7 @@ import glob
 import re
 
 
-class MPNN:
+class MPNN(Task):
     def __init__(
         self,
         poses,
@@ -30,6 +31,7 @@ class MPNN:
         tied_positions="",
         homooligomer=False,
         sampling_temp=0.3,
+        repack_neighbors=True,
         name="MPNN_Run",
     ):
         """Initialize the MPNN settings
@@ -55,11 +57,12 @@ class MPNN:
 
         """
 
+        super().__init__(name=name)
+
         if not isinstance(poses, list):
             poses = [poses]
 
         self.input_poses = poses
-        self.name = name
         self.args = Args()
 
         #############################
@@ -87,6 +90,7 @@ class MPNN:
         self.args.omit_AAs = omit_AAs
         self.args.sampling_temp = str(sampling_temp)  # must be str
         self.designable_chains = designable_chains
+        self.repack_neighbors = repack_neighbors
 
         ###### PARSE CHAINS ######
 
@@ -184,14 +188,14 @@ class MPNN:
             self.args.tied_positions_jsonl = ""
 
         # Print contents of temp folders
-        print("Input folder contents:")
+        self.logger.debug("Input folder contents:")
         for file in glob.glob(f"{input_path}/*"):
-            print(file)
-            print(open(file).read())
-        print("Output folder contents:")
+            self.logger.debug(file)
+            self.logger.debug(open(file).read())
+        self.logger.debug("Output folder contents:")
         for file in glob.glob(f"{jsonl_folder}/*"):
-            print(file)
-            print(open(file).read())
+            self.logger.debug(file)
+            self.logger.debug(open(file).read())
 
     def execute(self):
         """Execute the MPNN"""
@@ -214,7 +218,7 @@ class MPNN:
                         )
                     }
 
-                    print(sequences)
+                    self.logger.debug(sequences)
                     reject = False
                     for chain in sequences:
                         if p.match(sequence):
@@ -224,18 +228,37 @@ class MPNN:
                             chain_start = get_resnums_for_chain(wpose, chain)[1]
                             stm = SimpleThreadingMover()
                             stm.set_sequence(sequences[chain], chain_start)
+                            stm.set_pack_neighbors(self.repack_neighbors)
                             stm.apply(wpose)
                     if reject:
                         continue
 
                     ppose = packed_pose.to_packed(wpose)
-                    print(ppose.scores.keys())
+                    self.logger.debug(ppose.scores.keys())
                     output_structures.append(ppose)
 
         return output_structures
 
 
-class FastDesign_MPNN:
+class FastDesign_MPNN(Task):
+    """This Task generates structures using a FastDesign like protocol
+    but using MPNN instead of the Rosetta packer.  The overall routine
+    is to:
+        1) Generate N (nstruct_per_cycle) sequences using MPNN on the input pose
+        2) Thread the sequences onto the input pose allowing all rotamers to repack
+            - The MPNN Task by default allows all neighbors to repack upon threading
+            - Can change the "repack_neighbors" param to False if you dont want this
+        3) Minimizes each structure
+            - By default, none of the backbones are allowed to move
+            - By default, chi and jumps can move
+            - Control which chain BB can move by the "moveable_chains" param
+            - Control which residue BBs can move by the "moveable_residues" param
+        4) Select the top K (select_top) structures and repeat from step 1, generating
+            N (nstruct_per_cycle) new sequences for eack K input structures
+        5) Repeat steps 2-4 for C (cycles) times
+        6) Return the top K (select_top) structures from the final cycle
+    """
+
     def __init__(
         self,
         pose,
@@ -249,6 +272,29 @@ class FastDesign_MPNN:
         name="FastDesign_MPNN",
         **mpnn_args,
     ):
+        """Initialize the FastDesign_MPNN Task
+
+        Args:
+            pose (Pose): The input pose
+            cycles (int, optional): The number of cycles to run. Defaults to 3.
+            nstruct_per_cycle (int, optional): The number of structures to generate per cycle. Defaults to 5.
+            select_top (int, optional): The number of structures to select from each cycle. Defaults to 2.
+            designable_chains (str, optional): The chains to design. Defaults to "" = all chains.
+            movable_chains (str, optional): The chains to allow backbone movement. Defaults to "" = no chains.
+            fixed_positions (str, optional): The positions to fix. Defaults to "".
+            movable_residues (str, optional): The residues to allow backbone movement. Defaults to "".
+            name (str, optional): The name of the Task. Defaults to "FastDesign_MPNN".
+
+            **mpnn_args: The arguments to pass to the MPNN Task, allowed kwargs are:
+                - "omit_AAs" (str): The AAs to omit from the design
+                - "bias_AA" (str): The AAs to bias the design towards
+                - "tied_positions" (str): The positions within the pose that should be the same identity
+                - "homooligomer" (bool): Whether or not the complex is a homooligomer
+                - "sampling_temp" (float): The sampling temperature for the MPNN
+                - "repack_neighbors" (bool): Whether or not to repack the neighbors of the designable positions
+        """
+
+        super().__init__(name=name)
         self.input_pose = pose
         self.poses = [pose]
         self.cycles = cycles
@@ -263,7 +309,6 @@ class FastDesign_MPNN:
         self.movable_chains = movable_chains
         self.fixed_positions = fixed_positions
         self.movable_residues = movable_residues
-        self.name = name
 
         allowed_keys = [
             "omit_AAs",
@@ -271,6 +316,7 @@ class FastDesign_MPNN:
             "tied_positions",
             "homooligomer",
             "sampling_temp",
+            "repack_neighbors",
         ]
         for key in mpnn_args:
             if key not in allowed_keys:
