@@ -81,7 +81,7 @@ def featurize(batch, device):
                 chain_length = len(chain_seq)
                 chain_coords = b[f'coords_chain_{letter}'] #this is a dictionary
                 chain_mask = np.ones(chain_length) #0.0 for visible chains
-                x_chain = np.stack([chain_coords[c] for c in [f'N_chain_{letter}', f'CA_chain_{letter}', f'C_chain_{letter}', f'O_chain_{letter}']], 1) #[chain_lenght,4,3]
+                x_chain = np.stack([chain_coords[c] for c in [f'N_chain_{letter}', f'CA_chain_{letter}', f'C_chain_{letter}', f'O_chain_{letter}']], 1) #[chain_length,4,3]
                 x_chain_list.append(x_chain)
                 chain_mask_list.append(chain_mask)
                 chain_seq_list.append(chain_seq)
