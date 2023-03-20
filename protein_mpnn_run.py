@@ -42,9 +42,14 @@ def main(args):
         file_path = os.path.realpath(__file__)
         k = file_path.rfind("/")
         if args.ca_only:
+            print("Using CA-ProteinMPNN!")
             model_folder_path = file_path[:k] + '/ca_model_weights/'
         else:
-            model_folder_path = file_path[:k] + '/vanilla_model_weights/'
+            if args.use_soluble_model:
+                print("Using ProteinMPNN trained on soluble proteins only!")
+                model_folder_path = file_path[:k] + '/soluble_model_weights/'
+            else:
+                model_folder_path = file_path[:k] + '/vanilla_model_weights/'
 
     checkpoint_path = model_folder_path + f'{args.model_name}.pt'
     folder_for_outputs = args.out_folder
@@ -416,6 +421,8 @@ if __name__ == "__main__":
     argparser.add_argument("--ca_only", action="store_true", default=False, help="Parse CA-only structures and use CA-only models (default: false)")   
     argparser.add_argument("--path_to_model_weights", type=str, default="", help="Path to model weights folder;") 
     argparser.add_argument("--model_name", type=str, default="v_48_020", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020, v_48_030; v_48_010=version with 48 edges 0.10A noise")
+    argparser.add_argument("--use_soluble_model", action="store_true", default=False, help="Flag to load ProteinMPNN weights trained on soluble proteins only.")
+
 
     argparser.add_argument("--seed", type=int, default=0, help="If set to 0 then a random seed will be picked;")
  
