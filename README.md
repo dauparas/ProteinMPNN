@@ -75,6 +75,7 @@ These are provided `examples/`:
 * `submit_example_6.sh` - homooligomer example
 * `submit_example_7.sh` - return sequence unconditional probabilities (PSSM like)
 * `submit_example_8.sh` - add amino acid bias
+* `submit_example_pssm.sh` - use PSSM bias when designing sequences
 -----------------------------------------------------------------------------------------------------
 Output example:
 ```
