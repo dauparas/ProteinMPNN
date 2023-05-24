@@ -44,6 +44,9 @@ def main(args):
         if args.ca_only:
             print("Using CA-ProteinMPNN!")
             model_folder_path = file_path[:k] + '/ca_model_weights/'
+            if args.use_soluble_model:
+                print("WARNING: CA-SolubleMPNN is not available yet")
+                sys.exit()
         else:
             if args.use_soluble_model:
                 print("Using ProteinMPNN trained on soluble proteins only!")
