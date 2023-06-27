@@ -181,7 +181,7 @@ def main(args):
     model.to(device)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
-   
+
     if print_all:
         print(40*'-')
         print('Number of edges:', checkpoint['num_edges'])
