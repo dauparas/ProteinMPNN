@@ -1,5 +1,19 @@
 import argparse
 
+def parse_tied_str(tied_position_str):
+    tied_list = []
+    for one in tied_position_str.split(","):
+        one_list = []
+        for item in one.split():
+            if len(item.split(":")) == 1:
+                one_list.append(int(item.split(":")))
+            elif len(item.split(":")) == 2:
+                one_list.extend(list(range(int(item.split(":")[0]), int(item.split(":")[1]))))
+            else:
+                raise RuntimeError("Now we only support slice syntax(1:10, 2:11) and ordinary syntax(1 2, 2 3)")
+        tied_list.append(one_list)
+    return tied_list
+
 def main(args):
 
     import glob
@@ -14,7 +28,7 @@ def main(args):
     homooligomeric_state = args.homooligomer
 
     if homooligomeric_state == 0:
-        tied_list = [[int(item) for item in one.split()] for one in args.position_list.split(",")]
+        tied_list = parse_tied_str(args.position_list)
         global_designed_chain_list = [str(item) for item in args.chain_list.split()]
         my_dict = {}
         for json_str in json_list:
@@ -49,7 +63,7 @@ if __name__ == "__main__":
     argparser.add_argument("--input_path", type=str, help="Path to the parsed PDBs")
     argparser.add_argument("--output_path", type=str, help="Path to the output dictionary")
     argparser.add_argument("--chain_list", type=str, default='', help="List of the chains that need to be fixed")
-    argparser.add_argument("--position_list", type=str, default='', help="Position lists, e.g. 11 12 14 18, 1 2 3 4 for first chain and the second chain")
+    argparser.add_argument("--position_list", type=str, default='', help="Position lists, e.g. 11 12 14 18, 1 2 3 4 for first chain and the second chain. Slice is now supported.")
     argparser.add_argument("--homooligomer", type=int, default=0, help="If 0 do not use, if 1 then design homooligomer")
 
     args = argparser.parse_args()
