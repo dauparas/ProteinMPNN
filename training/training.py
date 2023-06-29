@@ -235,7 +235,7 @@ if __name__ == "__main__":
     argparser.add_argument("--reload_data_every_n_epochs", type=int, default=2, help="reload training data every n epochs")
     argparser.add_argument("--num_examples_per_epoch", type=int, default=1000000, help="number of training example to load for one epoch")
     argparser.add_argument("--batch_size", type=int, default=10000, help="number of tokens for one batch")
-    argparser.add_argument("--max_protein_length", type=int, default=10000, help="maximum length of the protein complext")
+    argparser.add_argument("--max_protein_length", type=int, default=10000, help="maximum length of the protein complex")
     argparser.add_argument("--hidden_dim", type=int, default=128, help="hidden model dimension")
     argparser.add_argument("--num_encoder_layers", type=int, default=3, help="number of encoder layers") 
     argparser.add_argument("--num_decoder_layers", type=int, default=3, help="number of decoder layers")

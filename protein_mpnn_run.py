@@ -430,7 +430,7 @@ if __name__ == "__main__":
     argparser.add_argument("--seed", type=int, default=0, help="If set to 0 then a random seed will be picked;")
  
     argparser.add_argument("--save_score", type=int, default=0, help="0 for False, 1 for True; save score=-log_prob to npy files")
-    argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilites per position")
+    argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilities per position")
 
     argparser.add_argument("--score_only", type=int, default=0, help="0 for False, 1 for True; score input backbone-sequence pairs")
     argparser.add_argument("--path_to_fasta", type=str, default="", help="score provided input sequence in a fasta format; e.g. GGGGGG/PPPPS/WWW for chains A, B, C sorted alphabetically and separated by /")
@@ -450,16 +450,16 @@ if __name__ == "__main__":
     argparser.add_argument("--pdb_path", type=str, default='', help="Path to a single PDB to be designed")
     argparser.add_argument("--pdb_path_chains", type=str, default='', help="Define which chains need to be designed for a single PDB ")
     argparser.add_argument("--jsonl_path", type=str, help="Path to a folder with parsed pdb into jsonl")
-    argparser.add_argument("--chain_id_jsonl",type=str, default='', help="Path to a dictionary specifying which chains need to be designed and which ones are fixed, if not specied all chains will be designed.")
+    argparser.add_argument("--chain_id_jsonl",type=str, default='', help="Path to a dictionary specifying which chains need to be designed and which ones are fixed, if not specified all chains will be designed.")
     argparser.add_argument("--fixed_positions_jsonl", type=str, default='', help="Path to a dictionary with fixed positions")
     argparser.add_argument("--omit_AAs", type=list, default='X', help="Specify which amino acids should be omitted in the generated sequence, e.g. 'AC' would omit alanine and cystine.")
-    argparser.add_argument("--bias_AA_jsonl", type=str, default='', help="Path to a dictionary which specifies AA composion bias if neededi, e.g. {A: -1.1, F: 0.7} would make A less likely and F more likely.")
+    argparser.add_argument("--bias_AA_jsonl", type=str, default='', help="Path to a dictionary which specifies AA composition bias if needed, e.g. {A: -1.1, F: 0.7} would make A less likely and F more likely.")
    
     argparser.add_argument("--bias_by_res_jsonl", default='', help="Path to dictionary with per position bias.") 
-    argparser.add_argument("--omit_AA_jsonl", type=str, default='', help="Path to a dictionary which specifies which amino acids need to be omited from design at specific chain indices")
+    argparser.add_argument("--omit_AA_jsonl", type=str, default='', help="Path to a dictionary which specifies which amino acids need to be omitted from design at specific chain indices")
     argparser.add_argument("--pssm_jsonl", type=str, default='', help="Path to a dictionary with pssm")
     argparser.add_argument("--pssm_multi", type=float, default=0.0, help="A value between [0.0, 1.0], 0.0 means do not use pssm, 1.0 ignore MPNN predictions")
-    argparser.add_argument("--pssm_threshold", type=float, default=0.0, help="A value between -inf + inf to restric per position AAs")
+    argparser.add_argument("--pssm_threshold", type=float, default=0.0, help="A value between -inf + inf to restrict per position AAs")
     argparser.add_argument("--pssm_log_odds_flag", type=int, default=0, help="0 for False, 1 for True")
     argparser.add_argument("--pssm_bias_flag", type=int, default=0, help="0 for False, 1 for True")
     

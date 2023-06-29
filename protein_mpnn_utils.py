@@ -255,11 +255,11 @@ def tied_featurize(batch, device, chain_dict, fixed_position_dict=None, omit_AA_
                 chain_coords = b[f'coords_chain_{letter}'] #this is a dictionary
                 chain_mask = np.zeros(chain_length) #0.0 for visible chains
                 if ca_only:
-                    x_chain = np.array(chain_coords[f'CA_chain_{letter}']) #[chain_lenght,1,3] #CA_diff
+                    x_chain = np.array(chain_coords[f'CA_chain_{letter}']) #[chain_length,1,3] #CA_diff
                     if len(x_chain.shape) == 2:
                         x_chain = x_chain[:,None,:]
                 else:
-                    x_chain = np.stack([chain_coords[c] for c in [f'N_chain_{letter}', f'CA_chain_{letter}', f'C_chain_{letter}', f'O_chain_{letter}']], 1) #[chain_lenght,4,3]
+                    x_chain = np.stack([chain_coords[c] for c in [f'N_chain_{letter}', f'CA_chain_{letter}', f'C_chain_{letter}', f'O_chain_{letter}']], 1) #[chain_length,4,3]
                 x_chain_list.append(x_chain)
                 chain_mask_list.append(chain_mask)
                 chain_seq_list.append(chain_seq)
@@ -290,11 +290,11 @@ def tied_featurize(batch, device, chain_dict, fixed_position_dict=None, omit_AA_
                 chain_coords = b[f'coords_chain_{letter}'] #this is a dictionary
                 chain_mask = np.ones(chain_length) #1.0 for masked
                 if ca_only:
-                    x_chain = np.array(chain_coords[f'CA_chain_{letter}']) #[chain_lenght,1,3] #CA_diff
+                    x_chain = np.array(chain_coords[f'CA_chain_{letter}']) #[chain_length,1,3] #CA_diff
                     if len(x_chain.shape) == 2:
                         x_chain = x_chain[:,None,:]
                 else:
-                    x_chain = np.stack([chain_coords[c] for c in [f'N_chain_{letter}', f'CA_chain_{letter}', f'C_chain_{letter}', f'O_chain_{letter}']], 1) #[chain_lenght,4,3]               
+                    x_chain = np.stack([chain_coords[c] for c in [f'N_chain_{letter}', f'CA_chain_{letter}', f'C_chain_{letter}', f'O_chain_{letter}']], 1) #[chain_length,4,3]               
                 x_chain_list.append(x_chain)
                 chain_mask_list.append(chain_mask)
                 chain_seq_list.append(chain_seq)
