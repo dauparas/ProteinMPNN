@@ -64,8 +64,8 @@ class StructureLoader():
         batch_max = 0
         for ix in sorted_ix:
             size = self.lengths[ix]
-            if size * (len(batch) + 1) <= self.batch_size:
-                batch.append(ix)
+            batch.append(ix)
+            if size * len(batch) <= self.batch_size:
                 batch_max = size
             else:
                 clusters.append(batch)
