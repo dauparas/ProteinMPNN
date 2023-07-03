@@ -1273,7 +1273,6 @@ class ProteinMPNN(nn.Module):
                 if pssm_log_odds_flag:
                     pssm_log_odds_mask_gathered = pssm_log_odds_mask[:,t]
                     probs_masked = probs*pssm_log_odds_mask_gathered
-                    probs_masked += probs * 0.001
                     probs = probs_masked/torch.sum(probs_masked, dim=-1, keepdim=True) #[B, 21]
                 if omit_AA_mask_flag:
                     omit_AA_mask_gathered = omit_AA_mask[:,t]
