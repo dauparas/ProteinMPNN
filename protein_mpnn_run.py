@@ -7,6 +7,7 @@ def main(args):
     import shutil
     import warnings
     import numpy as np
+    from tqdm import tqdm
     import torch
     from torch import optim
     from torch.utils.data import DataLoader
@@ -252,7 +253,7 @@ def main(args):
                         input_seq_length = len(fasta_seqs[fc-1])
                         S_input = torch.tensor([alphabet_dict[AA] for AA in fasta_seqs[fc-1]], device=device)[None,:].repeat(X.shape[0], 1)
                         S[:,:input_seq_length] = S_input #assumes that S and S_input are alphabetically sorted for masked_chains
-                    for j in range(NUM_BATCHES):
+                    tqdm(range(NUM_BATCHES), desc=f"{name_}", disable=args.suppress_print):
                         randn_1 = torch.randn(chain_M.shape, device=X.device)
                         log_probs = model(X, S, mask, chain_M*chain_M_pos, residue_idx, chain_encoding_all, randn_1)
                         mask_for_loss = mask*chain_M*chain_M_pos
@@ -287,7 +288,7 @@ def main(args):
                     print(f'Calculating conditional probabilities for {name_}')
                 conditional_probs_only_file = base_folder + '/conditional_probs_only/' + batch_clones[0]['name']
                 log_conditional_probs_list = []
-                for j in range(NUM_BATCHES):
+                tqdm(range(NUM_BATCHES), desc=f"{name_}", disable=args.suppress_print):
                     randn_1 = torch.randn(chain_M.shape, device=X.device)
                     log_conditional_probs = model.conditional_probs(X, S, mask, chain_M*chain_M_pos, residue_idx, chain_encoding_all, randn_1, args.conditional_probs_only_backbone)
                     log_conditional_probs_list.append(log_conditional_probs.cpu().numpy())
@@ -299,7 +300,7 @@ def main(args):
                     print(f'Calculating sequence unconditional probabilities for {name_}')
                 unconditional_probs_only_file = base_folder + '/unconditional_probs_only/' + batch_clones[0]['name']
                 log_unconditional_probs_list = []
-                for j in range(NUM_BATCHES):
+                tqdm(range(NUM_BATCHES), desc=f"{name_}", disable=args.suppress_print):
                     log_unconditional_probs = model.unconditional_probs(X, mask, residue_idx, chain_encoding_all)
                     log_unconditional_probs_list.append(log_unconditional_probs.cpu().numpy())
                 concat_log_p = np.concatenate(log_unconditional_probs_list, 0) #[B, L, 21]
@@ -322,7 +323,7 @@ def main(args):
                 t0 = time.time()
                 with open(ali_file, 'w') as f:
                     for temp in temperatures:
-                        for j in range(NUM_BATCHES):
+                        tqdm(range(NUM_BATCHES), desc=f"{name_}", disable=args.suppress_print):
                             randn_2 = torch.randn(chain_M.shape, device=X.device)
                             if tied_positions_dict == None:
                                 sample_dict = model.sample(X, randn_2, S, chain_M, chain_encoding_all, residue_idx, mask=mask, temperature=temp, omit_AAs_np=omit_AAs_np, bias_AAs_np=bias_AAs_np, chain_M_pos=chain_M_pos, omit_AA_mask=omit_AA_mask, pssm_coef=pssm_coef, pssm_bias=pssm_bias, pssm_multi=args.pssm_multi, pssm_log_odds_flag=bool(args.pssm_log_odds_flag), pssm_log_odds_mask=pssm_log_odds_mask, pssm_bias_flag=bool(args.pssm_bias_flag), bias_by_res=bias_by_res_all)
