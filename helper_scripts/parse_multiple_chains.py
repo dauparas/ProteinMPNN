@@ -5,6 +5,7 @@ def main(args):
     import numpy as np
     import os, time, gzip, json
     import glob 
+    import sys
     
     folder_with_pdbs_path = args.input_path
     save_path = args.output_path
@@ -99,7 +100,10 @@ def main(args):
     
     pdb_dict_list = []
     c = 0
-    
+
+    if folder_with_pdbs_path[-4:]==".pdb":
+        sys.exit("Error in Submission Script: The fixed positions options require a folder with pdb's be passed in, not a pdb filename. Please rectifiy the \"folder_with_pdbs\" variable in your submission script.")
+
     if folder_with_pdbs_path[-1]!='/':
         folder_with_pdbs_path = folder_with_pdbs_path+'/'
     
