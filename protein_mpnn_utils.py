@@ -375,7 +375,7 @@ def tied_featurize(batch, device, chain_dict, fixed_position_dict=None, omit_AA_
 
         m_pad = np.pad(m, [[0,L_max-l]], 'constant', constant_values=(0.0, ))
         m_pos_pad = np.pad(m_pos, [[0,L_max-l]], 'constant', constant_values=(0.0, ))
-        omit_AA_mask_pad = np.pad(np.concatenate(omit_AA_mask_list,0), [[0,L_max-l]], 'constant', constant_values=(0.0, ))
+        omit_AA_mask_pad = np.pad(np.concatenate(omit_AA_mask_list,0), [[0, L_max-l],[0, 0]], 'constant', constant_values=(0.0, ))
         chain_M[i,:] = m_pad
         chain_M_pos[i,:] = m_pos_pad
         omit_AA_mask[i,] = omit_AA_mask_pad
