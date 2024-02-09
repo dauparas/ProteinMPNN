@@ -2,6 +2,7 @@ from __future__ import print_function
 import json, time, os, sys, glob
 import shutil
 import numpy as np
+from os import path
 import torch
 from torch import optim
 from torch.utils.data import DataLoader
@@ -177,8 +178,7 @@ def parse_PDB(path_to_pdb, input_chain_list=None, ca_only=False):
                     coords_dict_chain['O_chain_' + letter] = xyz[:, 3, :].tolist()
                 my_dict['coords_chain_'+letter]=coords_dict_chain
                 s += 1
-        fi = biounit.rfind("/")
-        my_dict['name']=biounit[(fi+1):-4]
+        my_dict['name']=path.basename(biounit)[:-4]
         my_dict['num_of_chains'] = s
         my_dict['seq'] = concat_seq
         if s <= len(chain_alphabet):

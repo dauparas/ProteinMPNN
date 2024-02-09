@@ -4,7 +4,8 @@ def main(args):
 
     import numpy as np
     import os, time, gzip, json
-    import glob 
+    import glob
+    from os import path
     
     folder_with_pdbs_path = args.input_path
     save_path = args.output_path
@@ -138,8 +139,7 @@ def main(args):
                     coords_dict_chain['O_chain_' + letter] = xyz[:, 3, :].tolist()
                 my_dict['coords_chain_'+letter]=coords_dict_chain
                 s += 1
-        fi = biounit.rfind("/")
-        my_dict['name']=biounit[(fi+1):-4]
+        my_dict['name']=path.basename(biounit)[:-4]
         my_dict['num_of_chains'] = s
         my_dict['seq'] = concat_seq
         if s < len(chain_alphabet):
