@@ -186,7 +186,6 @@ def main(args):
         print(f'Training noise level: {noise_level_print}A')
  
     # Build paths for experiment
-        
     # Add trailing slash if missing
     base_folder = os.path.join(folder_for_outputs, "")
     if not os.path.exists(base_folder):
