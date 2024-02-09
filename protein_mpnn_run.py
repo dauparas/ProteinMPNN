@@ -35,24 +35,22 @@ def main(args):
   
 
     if args.path_to_model_weights:
-        model_folder_path = args.path_to_model_weights
-        if model_folder_path[-1] != '/':
-            model_folder_path = model_folder_path + '/'
+        # This adds the trailing slash if missing
+        model_folder_path = os.path.join(args.path_to_model_weights, '')
     else: 
-        file_path = os.path.realpath(__file__)
-        k = file_path.rfind("/")
+        file_path = os.path.dirname(os.path.realpath(__file__))
         if args.ca_only:
             print("Using CA-ProteinMPNN!")
-            model_folder_path = file_path[:k] + '/ca_model_weights/'
+            model_folder_path = os.path.join(file_path, 'ca_model_weights', '')
             if args.use_soluble_model:
                 print("WARNING: CA-SolubleMPNN is not available yet")
                 sys.exit()
         else:
             if args.use_soluble_model:
                 print("Using ProteinMPNN trained on soluble proteins only!")
-                model_folder_path = file_path[:k] + '/soluble_model_weights/'
+                model_folder_path = os.path.join(file_path, 'soluble_model_weights', '')
             else:
-                model_folder_path = file_path[:k] + '/vanilla_model_weights/'
+                model_folder_path = os.path.join(file_path, 'vanilla_model_weights', '')
 
     checkpoint_path = model_folder_path + f'{args.model_name}.pt'
     folder_for_outputs = args.out_folder
@@ -188,9 +186,9 @@ def main(args):
         print(f'Training noise level: {noise_level_print}A')
  
     # Build paths for experiment
-    base_folder = folder_for_outputs
-    if base_folder[-1] != '/':
-        base_folder = base_folder + '/'
+        
+    # Add trailing slash if missing
+    base_folder = os.path.join(folder_for_outputs, "")
     if not os.path.exists(base_folder):
         os.makedirs(base_folder)
     
@@ -243,9 +241,9 @@ def main(args):
                     loop_c = len(fasta_seqs)
                 for fc in range(1+loop_c):
                     if fc == 0:
-                        structure_sequence_score_file = base_folder + '/score_only/' + batch_clones[0]['name'] + f'_pdb'
+                        structure_sequence_score_file = os.path.join(base_folder, 'score_only', batch_clones[0]['name'] + f'_pdb')
                     else:
-                        structure_sequence_score_file = base_folder + '/score_only/' + batch_clones[0]['name'] + f'_fasta_{fc}'
+                        structure_sequence_score_file = os.path.join(base_folder, 'score_only', batch_clones[0]['name'] + f'_fasta_{fc}')
                     native_score_list = []
                     global_native_score_list = []
                     if fc > 0:
@@ -285,7 +283,7 @@ def main(args):
             elif args.conditional_probs_only:
                 if print_all:
                     print(f'Calculating conditional probabilities for {name_}')
-                conditional_probs_only_file = base_folder + '/conditional_probs_only/' + batch_clones[0]['name']
+                conditional_probs_only_file = os.path.join(base_folder, 'conditional_probs_only', batch_clones[0]['name'])
                 log_conditional_probs_list = []
                 for j in range(NUM_BATCHES):
                     randn_1 = torch.randn(chain_M.shape, device=X.device)
@@ -297,7 +295,7 @@ def main(args):
             elif args.unconditional_probs_only:
                 if print_all:
                     print(f'Calculating sequence unconditional probabilities for {name_}')
-                unconditional_probs_only_file = base_folder + '/unconditional_probs_only/' + batch_clones[0]['name']
+                unconditional_probs_only_file = os.path.join(base_folder, 'unconditional_probs_only', batch_clones[0]['name'])
                 log_unconditional_probs_list = []
                 for j in range(NUM_BATCHES):
                     log_unconditional_probs = model.unconditional_probs(X, mask, residue_idx, chain_encoding_all)
@@ -314,9 +312,9 @@ def main(args):
                 global_scores = _scores(S, log_probs, mask) #score the whole structure-sequence
                 global_native_score = global_scores.cpu().data.numpy()
                 # Generate some sequences
-                ali_file = base_folder + '/seqs/' + batch_clones[0]['name'] + '.fa'
-                score_file = base_folder + '/scores/' + batch_clones[0]['name'] + '.npz'
-                probs_file = base_folder + '/probs/' + batch_clones[0]['name'] + '.npz'
+                ali_file = os.path.join(base_folder, 'seqs', batch_clones[0]['name'] + '.fa')
+                score_file = os.path.join(base_folder, 'scores', batch_clones[0]['name'] + '.npz')
+                probs_file = os.path.join(base_folder, 'probs', batch_clones[0]['name'] + '.npz')
                 if print_all:
                     print(f'Generating sequences for: {name_}')
                 t0 = time.time()
