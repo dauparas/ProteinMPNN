@@ -41,6 +41,10 @@ def main(args):
       output: (length, atoms, coords=(x,y,z)), sequence
       '''
       xyz,seq,min_resn,max_resn = {},{},1e6,-1e6
+
+      res_idx = 0
+      last_res = "NOTHING"
+        
       for line in open(x,"rb"):
         line = line.decode("utf-8","ignore").rstrip()
     
@@ -56,11 +60,12 @@ def main(args):
             resn = line[22:22+5].strip()
             x,y,z = [float(line[i:(i+8)]) for i in [30,38,46]]
     
-            if resn[-1].isalpha(): 
-                resa,resn = resn[-1],int(resn[:-1])-1
-            else: 
-                resa,resn = "",int(resn)-1
-    #         resn = int(resn)
+            if resn != last_res:
+               res_idx += 1
+               last_res = resn
+               
+            resa,resn = "",res_idx
+
             if resn < min_resn: 
                 min_resn = resn
             if resn > max_resn: 
