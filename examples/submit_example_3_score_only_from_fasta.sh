@@ -8,7 +8,7 @@
 source activate mlfold
 
 path_to_PDB="../inputs/PDB_complexes/pdbs/3HTN.pdb"
-path_to_fasta="/home/justas/projects/github/ProteinMPNN/outputs/example_3_outputs/seqs/3HTN.fa"
+path_to_fasta="../outputs/example_3_outputs/seqs/3HTN.fa"
 
 output_dir="../outputs/example_3_score_only_from_fasta_outputs"
 if [ ! -d $output_dir ]
