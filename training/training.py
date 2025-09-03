@@ -28,12 +28,10 @@ def main(args):
 
     if base_folder[-1] != '/':
         base_folder += '/'
-    if not os.path.exists(base_folder):
-        os.makedirs(base_folder)
+    os.makedirs(base_folder, exist_ok=True)
     subfolders = ['model_weights']
     for subfolder in subfolders:
-        if not os.path.exists(base_folder + subfolder):
-            os.makedirs(base_folder + subfolder)
+        os.makedirs(base_folder + subfolder, exist_ok=True)
 
     PATH = args.previous_checkpoint
 

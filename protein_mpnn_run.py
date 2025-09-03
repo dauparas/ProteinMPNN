@@ -191,33 +191,24 @@ def main(args):
     base_folder = folder_for_outputs
     if base_folder[-1] != '/':
         base_folder = base_folder + '/'
-    if not os.path.exists(base_folder):
-        os.makedirs(base_folder)
-    
-    if not os.path.exists(base_folder + 'seqs'):
-        os.makedirs(base_folder + 'seqs')
-    
+    os.makedirs(base_folder, exist_ok=True)
+    os.makedirs(base_folder + 'seqs', exist_ok=True)
+
     if args.save_score:
-        if not os.path.exists(base_folder + 'scores'):
-            os.makedirs(base_folder + 'scores')
+        os.makedirs(base_folder + 'scores', exist_ok=True)
 
     if args.score_only:
-        if not os.path.exists(base_folder + 'score_only'):
-            os.makedirs(base_folder + 'score_only')
-   
+        os.makedirs(base_folder + 'score_only', exist_ok=True)
 
     if args.conditional_probs_only:
-        if not os.path.exists(base_folder + 'conditional_probs_only'):
-            os.makedirs(base_folder + 'conditional_probs_only')
+        os.makedirs(base_folder + 'conditional_probs_only', exist_ok=True)
 
     if args.unconditional_probs_only:
-        if not os.path.exists(base_folder + 'unconditional_probs_only'):
-            os.makedirs(base_folder + 'unconditional_probs_only')
- 
+        os.makedirs(base_folder + 'unconditional_probs_only', exist_ok=True)
+
     if args.save_probs:
-        if not os.path.exists(base_folder + 'probs'):
-            os.makedirs(base_folder + 'probs') 
-    
+        os.makedirs(base_folder + 'probs', exist_ok=True)
+
     # Timing
     start_time = time.time()
     total_residues = 0
