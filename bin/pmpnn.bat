@@ -1,19 +1,17 @@
 @echo off
+setlocal
 
-set "PYTHON_EXE=python"
+rem Resolve the repository relative to this launcher, not the current directory.
+for %%I in ("%~dp0..") do set "REPO_ROOT=%%~fI"
 
-set "SCRIPT_PATH=C:\ProteinMPNN\protein_mpnn_run.py"
-
-call conda activate mlfold
-if errorlevel 1 (
-    echo [Error] Failed to activate mlfold Environment. It is required for ProteinMPNN :(
-    exit /b 1
+rem Use the active environment by default.  Set PMPNN_PYTHON to an explicit
+rem interpreter path when ProteinMPNN is installed in a different environment.
+if defined PMPNN_PYTHON (
+    set "PYTHON_EXE=%PMPNN_PYTHON%"
+) else (
+    set "PYTHON_EXE=python"
 )
 
-"%PYTHON_EXE%" "%SCRIPT_PATH%" %*
-
-call conda deactivate
-if errorlevel 1 (
-    echo [Error] Failed to deactivate mlfold Environment (Used by ProteinMPNN)
-    exit /b 1
-)
+"%PYTHON_EXE%" "%REPO_ROOT%\protein_mpnn_run.py" %*
+set "EXIT_CODE=%ERRORLEVEL%"
+endlocal & exit /b %EXIT_CODE%
