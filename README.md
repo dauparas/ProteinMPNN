@@ -6,7 +6,7 @@ Read [ProteinMPNN paper](https://www.biorxiv.org/content/10.1101/2022.06.03.4945
 
 ## Fork usage
 
-Run commands from the repository root. Install Python, PyTorch, and NumPy as described in the upstream material below, then use `protein_mpnn_run.py` as the only command-line entry point for normal designs.
+Run commands from the repository root. For a zero-setup command-line workflow, use the `pmpnn` launcher described below; it creates a Conda environment and installs this repository's requirements on first use. `protein_mpnn_run.py` remains available when you prefer to manage Python yourself.
 
 ### Design a single structure
 
@@ -63,18 +63,18 @@ Run `python protein_mpnn_run.py --help` for the complete option list. The existi
 
 Add this clone's `bin` directory to your system `PATH` to use `pmpnn` from any working directory. The launchers find the repository from their own location, so moving or recloning the repository does not require editing them.
 
-Before using the launcher, activate an environment containing ProteinMPNN's Python dependencies. Alternatively, set `PMPNN_PYTHON` to the full path of the desired Python interpreter.
+On first use, the launcher creates a Conda environment named `proteinmpnn` and installs [`requirements.txt`](requirements.txt). Conda must be installed and available on `PATH`; no environment activation or manual dependency installation is required. Set `PMPNN_ENV` to use a different environment name, or set `PMPNN_PYTHON` to bypass the automatic setup with a specific Python interpreter.
 
 ```bash
 # macOS/Linux
 export PATH="/path/to/ProteinMPNN/bin:$PATH"
 pmpnn --pdb-path /path/to/input.pdb --out_folder ./my_design
 
-# Use a specific interpreter instead of the active environment
+# Use a specific interpreter instead of automatic Conda setup
 PMPNN_PYTHON=/path/to/python pmpnn --pdb-path /path/to/input.pdb --out_folder ./my_design
 ```
 
-On Windows, add `C:\path\to\ProteinMPNN\bin` to `Path`, then run `pmpnn` from Command Prompt or PowerShell. For example: `pmpnn --pdb-path C:\path\to\input.pdb --out_folder .\my_design`. Set `PMPNN_PYTHON` to override `python` when needed.
+On Windows, add `C:\path\to\ProteinMPNN\bin` to `Path`, then run `pmpnn` from Command Prompt or PowerShell. For example: `pmpnn --pdb-path C:\path\to\input.pdb --out_folder .\my_design`. Set `PMPNN_PYTHON` to bypass automatic setup with a specific interpreter when needed.
 
 `pmpnn-util` remains only for the legacy batch-parser workflow. Normal designs use `pmpnn` and do not need a utility command.
 
