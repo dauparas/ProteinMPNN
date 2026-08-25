@@ -554,5 +554,21 @@ if __name__ == "__main__":
     argparser.add_argument("--tied-positions", type=str, default='', help="Tie residues directly: 'A:1=C:1;A:2=C:2'.")
     argparser.add_argument("--aa-bias", type=str, default='', help="Global amino-acid bias directly: 'D:1.39,E:1.39'.")
     
-    args = argparser.parse_args()    
+    # Show the complete command reference for an accidental bare invocation.
+    # This happens before importing NumPy or Torch in ``main``.
+    import sys
+    if len(sys.argv) == 1:
+        argparser.print_help()
+        sys.exit(0)
+
+    args = argparser.parse_args()
+    missing = []
+    if not args.pdb_path and not args.jsonl_path:
+        missing.append("one input source: --pdb-path or --jsonl-path")
+    if not args.out_folder:
+        missing.append("--out_folder")
+    if missing:
+        argparser.print_help(sys.stderr)
+        argparser.exit(2, "\nMissing required argument(s): {}\n".format(", ".join(missing)))
+
     main(args)   
