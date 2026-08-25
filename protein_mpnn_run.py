@@ -71,6 +71,7 @@ def _parse_aa_bias(value):
 def main(args):
 
     import json, time, os, sys, glob
+    import threading
     import shutil
     import warnings
     import numpy as np
@@ -88,6 +89,46 @@ def main(args):
     from protein_mpnn_utils import loss_nll, loss_smoothed, gather_edges, gather_nodes, gather_nodes_t, cat_neighbors_nodes, _scores, _S_to_seq, tied_featurize, parse_PDB, parse_fasta
     from protein_mpnn_utils import StructureDataset, StructureDatasetPDB, ProteinMPNN
 
+    class StageSpinner:
+        """Show that a long-running pipeline stage is still making progress."""
+
+        def __init__(self, label, enabled):
+            self.label = label
+            self.enabled = enabled
+            self.interactive = enabled and sys.stdout.isatty()
+            self._stop = threading.Event()
+            self._thread = None
+
+        def _animate(self):
+            frames = ('|', '/', '-', '\\')
+            frame = 0
+            while not self._stop.wait(0.12):
+                print(f'\r[{frames[frame % len(frames)]}] {self.label}', end='', flush=True)
+                frame += 1
+
+        def __enter__(self):
+            if not self.enabled:
+                return self
+            if self.interactive:
+                print(f'\r[|] {self.label}', end='', flush=True)
+                self._thread = threading.Thread(target=self._animate, daemon=True)
+                self._thread.start()
+            else:
+                print(f'[>] {self.label}', flush=True)
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            if not self.enabled:
+                return False
+            self._stop.set()
+            if self._thread is not None:
+                self._thread.join()
+            if self.interactive:
+                print(f'\r[OK] {self.label}', flush=True)
+            elif exc_type is None:
+                print(f'[OK] {self.label}', flush=True)
+            return False
+
     if args.seed:
         seed=args.seed
     else:
@@ -102,26 +143,28 @@ def main(args):
   
 
     if args.path_to_model_weights:
-        model_folder_path = args.path_to_model_weights
-        if model_folder_path[-1] != '/':
-            model_folder_path = model_folder_path + '/'
-    else: 
-        file_path = os.path.realpath(__file__)
-        k = file_path.rfind("/")
+        model_folder_path = os.path.abspath(os.path.expanduser(args.path_to_model_weights))
+    else:
+        repo_root = os.path.dirname(os.path.abspath(__file__))
         if args.ca_only:
             print("Using CA-ProteinMPNN!")
-            model_folder_path = file_path[:k] + '/ca_model_weights/'
+            model_folder_path = os.path.join(repo_root, 'ca_model_weights')
             if args.use_soluble_model:
                 print("WARNING: CA-SolubleMPNN is not available yet")
                 sys.exit()
         else:
             if args.use_soluble_model:
                 print("Using ProteinMPNN trained on soluble proteins only!")
-                model_folder_path = file_path[:k] + '/soluble_model_weights/'
+                model_folder_path = os.path.join(repo_root, 'soluble_model_weights')
             else:
-                model_folder_path = file_path[:k] + '/vanilla_model_weights/'
+                model_folder_path = os.path.join(repo_root, 'vanilla_model_weights')
 
-    checkpoint_path = model_folder_path + f'{args.model_name}.pt'
+    checkpoint_path = os.path.join(model_folder_path, f'{args.model_name}.pt')
+    if not os.path.isfile(checkpoint_path):
+        raise FileNotFoundError(
+            f"Model weights not found: {checkpoint_path}\n"
+            "Use --path_to_model_weights to specify the folder containing the .pt files."
+        )
     folder_for_outputs = args.out_folder
     
     NUM_BATCHES = args.num_seq_per_target//args.batch_size
@@ -229,13 +272,15 @@ def main(args):
                             bias_AAs_np[n] = bias_AA_dict[AA]
     
     if args.pdb_path:
-        pdb_dict_list = parse_PDB(args.pdb_path, ca_only=args.ca_only)
+        with StageSpinner('Parsing PDB structure', print_all):
+            pdb_dict_list = parse_PDB(args.pdb_path, ca_only=args.ca_only)
         dataset_valid = StructureDatasetPDB(pdb_dict_list, truncate=None, max_length=args.max_length)
         input_records = pdb_dict_list
     else:
-        dataset_valid = StructureDataset(args.jsonl_path, truncate=None, max_length=args.max_length, verbose=print_all)
-        with open(args.jsonl_path, 'r') as json_file:
-            input_records = [json.loads(line) for line in json_file if line.strip()]
+        with StageSpinner('Loading parsed structure input', print_all):
+            dataset_valid = StructureDataset(args.jsonl_path, truncate=None, max_length=args.max_length, verbose=print_all)
+            with open(args.jsonl_path, 'r') as json_file:
+                input_records = [json.loads(line) for line in json_file if line.strip()]
 
     # Inline constraints replace the common one-off JSONL helper workflow.  They
     # apply to every target; use the JSONL flags for per-target batch constraints.
@@ -261,12 +306,14 @@ def main(args):
         bias_AA_dict = _parse_aa_bias(args.aa_bias)
         bias_AAs_np = np.array([bias_AA_dict.get(AA, 0.0) for AA in alphabet])
 
-    checkpoint = torch.load(checkpoint_path, map_location=device) 
+    with StageSpinner(f'Loading model weights ({os.path.basename(checkpoint_path)})', print_all):
+        checkpoint = torch.load(checkpoint_path, map_location=device)
     noise_level_print = checkpoint['noise_level']
     model = ProteinMPNN(ca_only=args.ca_only, num_letters=21, node_features=hidden_dim, edge_features=hidden_dim, hidden_dim=hidden_dim, num_encoder_layers=num_layers, num_decoder_layers=num_layers, augment_eps=args.backbone_noise, k_neighbors=checkpoint['num_edges'])
-    model.to(device)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    model.eval()
+    with StageSpinner('Preparing ProteinMPNN model', print_all):
+        model.to(device)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.eval()
 
     if print_all:
         print(40*'-')
@@ -312,14 +359,16 @@ def main(args):
     # Validation epoch
     with torch.no_grad():
         test_sum, test_weights = 0., 0.
+        total_targets = len(dataset_valid)
         for ix, protein in enumerate(dataset_valid):
             score_list = []
             global_score_list = []
             all_probs_list = []
             all_log_probs_list = []
             S_sample_list = []
-            batch_clones = [copy.deepcopy(protein) for i in range(BATCH_COPIES)]
-            X, S, mask, lengths, chain_M, chain_encoding_all, chain_list_list, visible_list_list, masked_list_list, masked_chain_length_list_list, chain_M_pos, omit_AA_mask, residue_idx, dihedral_mask, tied_pos_list_of_lists_list, pssm_coef, pssm_bias, pssm_log_odds_all, bias_by_res_all, tied_beta = tied_featurize(batch_clones, device, chain_id_dict, fixed_positions_dict, omit_AA_dict, tied_positions_dict, pssm_dict, bias_by_res_dict, ca_only=args.ca_only)
+            with StageSpinner(f'Preparing target {ix + 1}/{total_targets}: {protein["name"]}', print_all):
+                batch_clones = [copy.deepcopy(protein) for i in range(BATCH_COPIES)]
+                X, S, mask, lengths, chain_M, chain_encoding_all, chain_list_list, visible_list_list, masked_list_list, masked_chain_length_list_list, chain_M_pos, omit_AA_mask, residue_idx, dihedral_mask, tied_pos_list_of_lists_list, pssm_coef, pssm_bias, pssm_log_odds_all, bias_by_res_all, tied_beta = tied_featurize(batch_clones, device, chain_id_dict, fixed_positions_dict, omit_AA_dict, tied_positions_dict, pssm_dict, bias_by_res_dict, ca_only=args.ca_only)
             pssm_log_odds_mask = (pssm_log_odds_all > args.pssm_threshold).float() #1.0 for true, 0.0 for false
             name_ = batch_clones[0]['name']
             if args.score_only:
@@ -407,8 +456,12 @@ def main(args):
                     print(f'Generating sequences for: {name_}')
                 t0 = time.time()
                 with open(ali_file, 'w') as f:
+                    total_sampling_batches = len(temperatures) * NUM_BATCHES
+                    completed_sampling_batches = 0
                     for temp in temperatures:
                         for j in range(NUM_BATCHES):
+                            if print_all:
+                                print(f'  Sampling batch {completed_sampling_batches + 1}/{total_sampling_batches} (temperature {temp})...', end='\r', flush=True)
                             randn_2 = torch.randn(chain_M.shape, device=X.device)
                             if tied_positions_dict == None:
                                 sample_dict = model.sample(X, randn_2, S, chain_M, chain_encoding_all, residue_idx, mask=mask, temperature=temp, omit_AAs_np=omit_AAs_np, bias_AAs_np=bias_AAs_np, chain_M_pos=chain_M_pos, omit_AA_mask=omit_AA_mask, pssm_coef=pssm_coef, pssm_bias=pssm_bias, pssm_multi=args.pssm_multi, pssm_log_odds_flag=bool(args.pssm_log_odds_flag), pssm_log_odds_mask=pssm_log_odds_mask, pssm_bias_flag=bool(args.pssm_bias_flag), bias_by_res=bias_by_res_all)
@@ -487,6 +540,9 @@ def main(args):
                                 seq_rec_print = np.format_float_positional(np.float32(seq_recovery_rate.detach().cpu().numpy()), unique=False, precision=4)
                                 sample_number = j*BATCH_COPIES+b_ix+1
                                 f.write('>T={}, sample={}, score={}, global_score={}, seq_recovery={}\n{}\n'.format(temp,sample_number,score_print,global_score_print,seq_rec_print,seq)) #write generated sequence
+                            completed_sampling_batches += 1
+                    if print_all and total_sampling_batches:
+                        print(' ' * 100, end='\r')
                 if args.save_score:
                     np.savez(score_file, score=np.array(score_list, np.float32), global_score=np.array(global_score_list, np.float32))
                 if args.save_probs:

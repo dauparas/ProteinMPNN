@@ -177,8 +177,10 @@ def parse_PDB(path_to_pdb, input_chain_list=None, ca_only=False):
                     coords_dict_chain['O_chain_' + letter] = xyz[:, 3, :].tolist()
                 my_dict['coords_chain_'+letter]=coords_dict_chain
                 s += 1
-        fi = biounit.rfind("/")
-        my_dict['name']=biounit[(fi+1):-4]
+        # ``biounit`` can be an absolute Windows path.  Using string slicing
+        # with '/' leaves its directories in the target name and later creates
+        # invalid output filenames (because Windows paths contain ':').
+        my_dict['name'] = os.path.splitext(os.path.basename(biounit))[0]
         my_dict['num_of_chains'] = s
         my_dict['seq'] = concat_seq
         if s <= len(chain_alphabet):
