@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Launch ProteinMPNN Studio with the existing no-setup Conda workflow.
+set -euo pipefail
+
+launcher_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "${launcher_dir}/.." && pwd)"
+if [[ -n "${PMPNN_PYTHON:-}" ]]; then
+    exec "${PMPNN_PYTHON}" "${repo_root}/protein_mpnn_gui.py"
+fi
+
+conda_env="${PMPNN_ENV:-proteinmpnn}"
+if ! command -v conda >/dev/null 2>&1; then
+    echo "[Error] Conda is required for automatic setup but was not found on PATH." >&2
+    exit 1
+fi
+if ! conda env list | awk '{print $1}' | grep -Fxq "${conda_env}"; then
+    echo "[ProteinMPNN] Creating Conda environment '${conda_env}'..." >&2
+    conda create --yes --name "${conda_env}" python=3.10 pip
+fi
+if ! conda run --no-capture-output --name "${conda_env}" python -c "import tkinter" >/dev/null 2>&1; then
+    echo "[ProteinMPNN] Installing the desktop GUI component in '${conda_env}'..." >&2
+    conda install --yes --name "${conda_env}" tk
+fi
+if ! conda run --no-capture-output --name "${conda_env}" python -c "import numpy, torch" >/dev/null 2>&1; then
+    echo "[ProteinMPNN] Installing ProteinMPNN requirements in '${conda_env}'..." >&2
+    conda run --no-capture-output --name "${conda_env}" python -m pip install --requirement "${repo_root}/requirements.txt"
+fi
+exec conda run --no-capture-output --name "${conda_env}" python "${repo_root}/protein_mpnn_gui.py"
