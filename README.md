@@ -2,13 +2,91 @@
 ![ProteinMPNN](https://docs.google.com/drawings/d/e/2PACX-1vTtnMBDOq8TpHIctUfGN8Vl32x5ISNcPKlxjcQJF2q70PlaH2uFlj2Ac4s3khnZqG1YxppdMr0iTyk-/pub?w=889&h=358)
 Read [ProteinMPNN paper](https://www.biorxiv.org/content/10.1101/2022.06.03.494563v1).
 
+> **Fork notice:** This is a usability-focused fork of the original ProteinMPNN repository. The model, helper scripts, examples, and upstream reference material are retained below. This fork adds a direct command-line workflow so routine designs do not require calling `protein_mpnn_utils.py` or scripts in `helper_scripts/` from the command line.
+
+## Fork usage
+
+Run commands from the repository root. Install Python, PyTorch, and NumPy as described in the upstream material below, then use `protein_mpnn_run.py` as the only command-line entry point for normal designs.
+
+### Design a single structure
+
+```bash
+python protein_mpnn_run.py \
+  --pdb-path inputs/PDB_complexes/pdbs/3HTN.pdb \
+  --out_folder outputs/my_design \
+  --num_seq_per_target 8 \
+  --sampling_temp "0.1" \
+  --batch_size 1
+```
+
+All chains are designed by default. Limit design to selected chains with `--design-chains`:
+
+```bash
+python protein_mpnn_run.py \
+  --pdb-path inputs/PDB_complexes/pdbs/3HTN.pdb \
+  --design-chains "A C" \
+  --out_folder outputs/my_design
+```
+
+### Add constraints directly
+
+Use the following options in the same command; no intermediate JSONL configuration file is needed.
+
+| Goal | Option | Example |
+| --- | --- | --- |
+| Fix residues | `--fixed-positions` | `"A:1-8,23,25;C:10-20,40"` |
+| Tie residues for symmetric sampling | `--tied-positions` | `"A:1=C:1;A:2=C:2"` |
+| Bias amino acids | `--aa-bias` | `"D:1.39,E:1.39,H:1.39"` |
+
+Residue indices are one-based positions within each chain, not PDB residue numbers. Separate chains with `;`, positions with `,`, and inclusive ranges with `-`. Each semicolon-separated tied group is sampled together.
+
+For example:
+
+```bash
+python protein_mpnn_run.py \
+  --pdb-path inputs/PDB_complexes/pdbs/3HTN.pdb \
+  --design-chains "A C" \
+  --fixed-positions "A:1-8,23,25;C:10-20,40" \
+  --tied-positions "A:1=C:1;A:2=C:2" \
+  --aa-bias "D:1.39,E:1.39,H:1.39,K:1.39" \
+  --out_folder outputs/my_design \
+  --num_seq_per_target 8 --sampling_temp "0.1" --batch_size 1
+```
+
+### Batch and advanced inputs
+
+Use `--jsonl-path parsed_pdbs.jsonl` to design an existing parsed batch. Inline constraints apply to every target in that batch. The original `*_jsonl` arguments remain available for advanced cases where every target needs different constraints, or when using PSSM/per-residue bias data. They are not required for normal single-PDB runs.
+
+Run `python protein_mpnn_run.py --help` for the complete option list. The existing underscore spellings remain compatible: `--pdb_path`, `--jsonl_path`, and `--pdb_path_chains` (an alias for `--design-chains`).
+
+### Optional command-line launcher
+
+Add this clone's `bin` directory to your system `PATH` to use `pmpnn` from any working directory. The launchers find the repository from their own location, so moving or recloning the repository does not require editing them.
+
+Before using the launcher, activate an environment containing ProteinMPNN's Python dependencies. Alternatively, set `PMPNN_PYTHON` to the full path of the desired Python interpreter.
+
+```bash
+# macOS/Linux
+export PATH="/path/to/ProteinMPNN/bin:$PATH"
+pmpnn --pdb-path /path/to/input.pdb --out_folder ./my_design
+
+# Use a specific interpreter instead of the active environment
+PMPNN_PYTHON=/path/to/python pmpnn --pdb-path /path/to/input.pdb --out_folder ./my_design
+```
+
+On Windows, add `C:\path\to\ProteinMPNN\bin` to `Path`, then run `pmpnn` from Command Prompt or PowerShell. For example: `pmpnn --pdb-path C:\path\to\input.pdb --out_folder .\my_design`. Set `PMPNN_PYTHON` to override `python` when needed.
+
+`pmpnn-util` remains only for the legacy batch-parser workflow. Normal designs use `pmpnn` and do not need a utility command.
+
+## Upstream README
+
 To run ProteinMPNN clone this github repo and install Python>=3.0, PyTorch, Numpy. 
 
 Full protein backbone models: `vanilla_model_weights/v_48_002.pt, v_48_010.pt, v_48_020.pt, v_48_030.pt`, `soluble_model_weights/v_48_010.pt, v_48_020.pt`.
 
 CA only models: `ca_model_weights/v_48_002.pt, v_48_010.pt, v_48_020.pt`. Enable flag `--ca_only` to use these models.
 
-Helper scripts: `helper_scripts` - helper functions to parse PDBs, assign which chains to design, which residues to fix, adding AA bias, tying residues etc.
+Helper scripts: `helper_scripts` - helper functions for advanced workflows and per-target batch configuration. Routine command-line use in this fork does not require invoking them.
 
 Code organization:
 * `protein_mpnn_run.py` - the main script to initialialize and run the model.
@@ -18,46 +96,6 @@ Code organization:
 * `outputs/` - outputs from examples
 * `colab_notebooks/` - Google Colab examples
 * `training/` - code and data to retrain the model
------------------------------------------------------------------------------------------------------
-Input flags for `protein_mpnn_run.py`:
-```
-    argparser.add_argument("--suppress_print", type=int, default=0, help="0 for False, 1 for True")
-    argparser.add_argument("--ca_only", action="store_true", default=False, help="Parse CA-only structures and use CA-only models (default: false)")
-    argparser.add_argument("--path_to_model_weights", type=str, default="", help="Path to model weights folder;")
-    argparser.add_argument("--model_name", type=str, default="v_48_020", help="ProteinMPNN model name: v_48_002, v_48_010, v_48_020, v_48_030; v_48_010=version with 48 edges 0.10A noise")
-    argparser.add_argument("--use_soluble_model", action="store_true", default=False, help="Flag to load ProteinMPNN weights trained on soluble proteins only.")
-    argparser.add_argument("--seed", type=int, default=0, help="If set to 0 then a random seed will be picked;")
-    argparser.add_argument("--save_score", type=int, default=0, help="0 for False, 1 for True; save score=-log_prob to npy files")
-    argparser.add_argument("--path_to_fasta", type=str, default="", help="score provided input sequence in a fasta format; e.g. GGGGGG/PPPPS/WWW for chains A, B, C sorted alphabetically and separated by /")
-    argparser.add_argument("--save_probs", type=int, default=0, help="0 for False, 1 for True; save MPNN predicted probabilites per position")
-    argparser.add_argument("--score_only", type=int, default=0, help="0 for False, 1 for True; score input backbone-sequence pairs")
-    argparser.add_argument("--conditional_probs_only", type=int, default=0, help="0 for False, 1 for True; output conditional probabilities p(s_i given the rest of the sequence and backbone)")
-    argparser.add_argument("--conditional_probs_only_backbone", type=int, default=0, help="0 for False, 1 for True; if true output conditional probabilities p(s_i given backbone)")
-    argparser.add_argument("--unconditional_probs_only", type=int, default=0, help="0 for False, 1 for True; output unconditional probabilities p(s_i given backbone) in one forward pass")
-    argparser.add_argument("--backbone_noise", type=float, default=0.00, help="Standard deviation of Gaussian noise to add to backbone atoms")
-    argparser.add_argument("--num_seq_per_target", type=int, default=1, help="Number of sequences to generate per target")
-    argparser.add_argument("--batch_size", type=int, default=1, help="Batch size; can set higher for titan, quadro GPUs, reduce this if running out of GPU memory")
-    argparser.add_argument("--max_length", type=int, default=200000, help="Max sequence length")
-    argparser.add_argument("--sampling_temp", type=str, default="0.1", help="A string of temperatures, 0.2 0.25 0.5. Sampling temperature for amino acids. Suggested values 0.1, 0.15, 0.2, 0.25, 0.3. Higher values will lead to more diversity.")
-    argparser.add_argument("--out_folder", type=str, help="Path to a folder to output sequences, e.g. /home/out/")
-    argparser.add_argument("--pdb_path", type=str, default='', help="Path to a single PDB to be designed")
-    argparser.add_argument("--pdb_path_chains", type=str, default='', help="Define which chains need to be designed for a single PDB ")
-    argparser.add_argument("--jsonl_path", type=str, help="Path to a folder with parsed pdb into jsonl")
-    argparser.add_argument("--chain_id_jsonl",type=str, default='', help="Path to a dictionary specifying which chains need to be designed and which ones are fixed, if not specied all chains will be designed.")
-    argparser.add_argument("--fixed_positions_jsonl", type=str, default='', help="Path to a dictionary with fixed positions")
-    argparser.add_argument("--omit_AAs", type=list, default='X', help="Specify which amino acids should be omitted in the generated sequence, e.g. 'AC' would omit alanine and cystine.")
-    argparser.add_argument("--bias_AA_jsonl", type=str, default='', help="Path to a dictionary which specifies AA composion bias if neededi, e.g. {A: -1.1, F: 0.7} would make A less likely and F more likely.")
-    argparser.add_argument("--bias_by_res_jsonl", default='', help="Path to dictionary with per position bias.")
-    argparser.add_argument("--omit_AA_jsonl", type=str, default='', help="Path to a dictionary which specifies which amino acids need to be omited from design at specific chain indices")
-    argparser.add_argument("--pssm_jsonl", type=str, default='', help="Path to a dictionary with pssm")
-    argparser.add_argument("--pssm_multi", type=float, default=0.0, help="A value between [0.0, 1.0], 0.0 means do not use pssm, 1.0 ignore MPNN predictions")
-    argparser.add_argument("--pssm_threshold", type=float, default=0.0, help="A value between -inf + inf to restric per position AAs")
-    argparser.add_argument("--pssm_log_odds_flag", type=int, default=0, help="0 for False, 1 for True")
-    argparser.add_argument("--pssm_bias_flag", type=int, default=0, help="0 for False, 1 for True")
-    argparser.add_argument("--tied_positions_jsonl", type=str, default='', help="Path to a dictionary with tied positions")
-
-```
------------------------------------------------------------------------------------------------------
 For example to make a conda environment to run ProteinMPNN:
 * `conda create --name mlfold` - this creates conda environment called `mlfold`
 * `source activate mlfold` - this activate environment
