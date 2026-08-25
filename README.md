@@ -78,6 +78,14 @@ On Windows, add `C:\path\to\ProteinMPNN\bin` to `Path`, then run `pmpnn` from Co
 
 `pmpnn-util` remains only for the legacy batch-parser workflow. Normal designs use `pmpnn` and do not need a utility command.
 
+### Desktop application
+
+ProteinMPNN Studio is a polished local desktop interface for the normal design workflow, direct constraints, optional probability/score outputs, and advanced JSONL inputs. It runs the same model script as `pmpnn`, shows live parsing/model/sampling activity, and requires no packages beyond the existing automatic Conda setup.
+
+On Windows, double-click [`bin/pmpnn-gui.bat`](bin/pmpnn-gui.bat), or run `pmpnn-gui` after adding this clone's `bin` directory to `Path`. On macOS/Linux, run `bash bin/pmpnn-gui` from a terminal. The first launch creates the same `proteinmpnn` Conda environment used by the command-line launcher, adding the standard Tk desktop component automatically if needed.
+
+To add a polished **ProteinMPNN Studio** icon and launch shortcuts to both the current user's Desktop and Start Menu, double-click [`bin/install-pmpnn-shortcuts.bat`](bin/install-pmpnn-shortcuts.bat). It generates the local Windows icon in `assets/` and creates shortcuts that always locate this clone correctly.
+
 ## Upstream README
 
 To run ProteinMPNN clone this github repo and install Python>=3.0, PyTorch, Numpy. 
