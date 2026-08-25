@@ -3,6 +3,18 @@
 # relative to this launcher so the clone can live anywhere on disk.
 set -euo pipefail
 
+# Do not create an environment or install Torch for an accidental empty call.
+if [[ "$#" -eq 0 || "$1" == "--help" || "$1" == "-h" ]]; then
+    cat <<'EOF'
+Usage: pmpnn --pdb-path INPUT.pdb --out_folder OUTPUT_DIR [options]
+       pmpnn --jsonl-path INPUT.jsonl --out_folder OUTPUT_DIR [options]
+
+Required: one input source (--pdb-path or --jsonl-path) and --out_folder.
+For all options, run: python protein_mpnn_run.py --help
+EOF
+    exit 0
+fi
+
 launcher_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${launcher_dir}/.." && pwd)"
 if [[ -n "${PMPNN_PYTHON:-}" ]]; then

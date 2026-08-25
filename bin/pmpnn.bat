@@ -1,6 +1,20 @@
 @echo off
 setlocal
 
+rem Do not create an environment or install Torch for an accidental empty call.
+if "%~1"=="" (
+    call :usage
+    endlocal & exit /b 0
+)
+if "%~1"=="--help" (
+    call :usage
+    endlocal & exit /b 0
+)
+if "%~1"=="-h" (
+    call :usage
+    endlocal & exit /b 0
+)
+
 rem Resolve the repository relative to this launcher, not the current directory.
 for %%I in ("%~dp0..") do set "REPO_ROOT=%%~fI"
 
@@ -41,3 +55,11 @@ if errorlevel 1 (
 call conda run --no-capture-output --name "%PMPNN_ENV%" python "%REPO_ROOT%\protein_mpnn_run.py" %*
 set "EXIT_CODE=%ERRORLEVEL%"
 endlocal & exit /b %EXIT_CODE%
+
+:usage
+echo Usage: pmpnn --pdb-path INPUT.pdb --out_folder OUTPUT_DIR [options]
+echo        pmpnn --jsonl-path INPUT.jsonl --out_folder OUTPUT_DIR [options]
+echo.
+echo Required: one input source (^--pdb-path or ^--jsonl-path) and ^--out_folder.
+echo For all options, run: python protein_mpnn_run.py --help
+exit /b 0
