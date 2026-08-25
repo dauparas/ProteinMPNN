@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Run ProteinMPNN from any working directory.  The repository is resolved
+# relative to this launcher so the clone can live anywhere on disk.
+set -euo pipefail
+
+launcher_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "${launcher_dir}/.." && pwd)"
+python_exe="${PMPNN_PYTHON:-python}"
+
+exec "${python_exe}" "${repo_root}/protein_mpnn_run.py" "$@"

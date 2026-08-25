@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Advanced parser utility.  Normal designs should use pmpnn directly.
+set -euo pipefail
+
+launcher_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "${launcher_dir}/.." && pwd)"
+python_exe="${PMPNN_PYTHON:-python}"
+
+exec "${python_exe}" "${repo_root}/helper_scripts/parse_multiple_chains.py" "$@"
