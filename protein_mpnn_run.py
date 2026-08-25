@@ -1,6 +1,73 @@
 import argparse
 import os.path
 
+
+def _parse_residue_spec(value):
+    """Parse ``A:1,2,5-8; B:10`` into the fixed-position dictionary format."""
+    result = {}
+    try:
+        for group in value.split(';'):
+            if not group.strip():
+                continue
+            chain, positions = group.split(':', 1)
+            residues = []
+            for item in positions.split(','):
+                item = item.strip()
+                if not item:
+                    continue
+                if '-' in item:
+                    start, end = (int(number.strip()) for number in item.split('-', 1))
+                    if start > end:
+                        raise ValueError('range start is greater than range end')
+                    residues.extend(range(start, end + 1))
+                else:
+                    residues.append(int(item))
+            if not chain.strip() or any(position < 1 for position in residues):
+                raise ValueError('chain names and residue numbers must be positive')
+            result[chain.strip()] = residues
+    except ValueError as error:
+        raise ValueError(
+            "expected CHAIN:RESIDUE[,RESIDUE|START-END][; ...], e.g. 'A:1,2,5-8;C:10'"
+        ) from error
+    if not result:
+        raise ValueError('at least one chain and residue must be provided')
+    return result
+
+
+def _parse_tied_positions(value):
+    """Parse ``A:1=B:1; A:2=B:2`` into ProteinMPNN's tied-position format."""
+    groups = []
+    try:
+        for group in value.split(';'):
+            positions = {}
+            for member in group.split('='):
+                chain, residue = member.strip().split(':', 1)
+                positions.setdefault(chain.strip(), []).append(int(residue.strip()))
+            if len(positions) < 2 or any(residue < 1 for values in positions.values() for residue in values):
+                raise ValueError('a tie needs at least two positive residue positions')
+            groups.append(positions)
+    except ValueError as error:
+        raise ValueError(
+            "expected CHAIN:RESIDUE=CHAIN:RESIDUE[; ...], e.g. 'A:1=C:1;A:2=C:2'"
+        ) from error
+    if not groups:
+        raise ValueError('at least one tied position must be provided')
+    return groups
+
+
+def _parse_aa_bias(value):
+    """Parse ``A:-1.0,F:0.5`` into ProteinMPNN's amino-acid bias format."""
+    try:
+        bias = {aa.strip().upper(): float(amount.strip()) for aa, amount in
+                (item.split(':', 1) for item in value.split(',') if item.strip())}
+    except ValueError as error:
+        raise ValueError("expected AA:BIAS[,AA:BIAS], e.g. 'D:1.39,E:1.39'") from error
+    valid_amino_acids = set('ACDEFGHIKLMNPQRSTVWY')
+    if not bias or any(len(aa) != 1 or aa not in valid_amino_acids for aa in bias):
+        raise ValueError('amino-acid bias keys must be one-letter amino-acid codes')
+    return bias
+
+
 def main(args):
 
     import json, time, os, sys, glob
@@ -164,16 +231,35 @@ def main(args):
     if args.pdb_path:
         pdb_dict_list = parse_PDB(args.pdb_path, ca_only=args.ca_only)
         dataset_valid = StructureDatasetPDB(pdb_dict_list, truncate=None, max_length=args.max_length)
-        all_chain_list = [item[-1:] for item in list(pdb_dict_list[0]) if item[:9]=='seq_chain'] #['A','B', 'C',...]
-        if args.pdb_path_chains:
-            designed_chain_list = [str(item) for item in args.pdb_path_chains.split()]
-        else:
-            designed_chain_list = all_chain_list
-        fixed_chain_list = [letter for letter in all_chain_list if letter not in designed_chain_list]
-        chain_id_dict = {}
-        chain_id_dict[pdb_dict_list[0]['name']]= (designed_chain_list, fixed_chain_list)
+        input_records = pdb_dict_list
     else:
         dataset_valid = StructureDataset(args.jsonl_path, truncate=None, max_length=args.max_length, verbose=print_all)
+        with open(args.jsonl_path, 'r') as json_file:
+            input_records = [json.loads(line) for line in json_file if line.strip()]
+
+    # Inline constraints replace the common one-off JSONL helper workflow.  They
+    # apply to every target; use the JSONL flags for per-target batch constraints.
+    target_names = [record['name'] for record in input_records]
+    if args.design_chains or args.pdb_path:
+        designed_chain_list = args.design_chains.split() if args.design_chains else None
+        chain_id_dict = {}
+        for record in input_records:
+            all_chain_list = [key[-1:] for key in record if key.startswith('seq_chain_')]
+            if designed_chain_list is None:
+                designed_chain_list = all_chain_list
+            unknown_chains = set(designed_chain_list) - set(all_chain_list)
+            if unknown_chains:
+                raise ValueError(f"Unknown design chain(s) {sorted(unknown_chains)} for {record['name']}")
+            chain_id_dict[record['name']] = (designed_chain_list, [chain for chain in all_chain_list if chain not in designed_chain_list])
+    if args.fixed_positions:
+        fixed_positions = _parse_residue_spec(args.fixed_positions)
+        fixed_positions_dict = {name: fixed_positions for name in target_names}
+    if args.tied_positions:
+        tied_positions = _parse_tied_positions(args.tied_positions)
+        tied_positions_dict = {name: tied_positions for name in target_names}
+    if args.aa_bias:
+        bias_AA_dict = _parse_aa_bias(args.aa_bias)
+        bias_AAs_np = np.array([bias_AA_dict.get(AA, 0.0) for AA in alphabet])
 
     checkpoint = torch.load(checkpoint_path, map_location=device) 
     noise_level_print = checkpoint['noise_level']
@@ -447,9 +533,9 @@ if __name__ == "__main__":
     argparser.add_argument("--sampling_temp", type=str, default="0.1", help="A string of temperatures, 0.2 0.25 0.5. Sampling temperature for amino acids. Suggested values 0.1, 0.15, 0.2, 0.25, 0.3. Higher values will lead to more diversity.")
     
     argparser.add_argument("--out_folder", type=str, help="Path to a folder to output sequences, e.g. /home/out/")
-    argparser.add_argument("--pdb_path", type=str, default='', help="Path to a single PDB to be designed")
-    argparser.add_argument("--pdb_path_chains", type=str, default='', help="Define which chains need to be designed for a single PDB ")
-    argparser.add_argument("--jsonl_path", type=str, help="Path to a folder with parsed pdb into jsonl")
+    argparser.add_argument("--pdb_path", "--pdb-path", type=str, default='', help="Path to a single PDB to design")
+    argparser.add_argument("--pdb_path_chains", "--design-chains", dest="design_chains", type=str, default='', help="Whitespace-separated chains to design (all chains by default for one PDB)")
+    argparser.add_argument("--jsonl_path", "--jsonl-path", type=str, help="Path to parsed PDB JSONL input")
     argparser.add_argument("--chain_id_jsonl",type=str, default='', help="Path to a dictionary specifying which chains need to be designed and which ones are fixed, if not specied all chains will be designed.")
     argparser.add_argument("--fixed_positions_jsonl", type=str, default='', help="Path to a dictionary with fixed positions")
     argparser.add_argument("--omit_AAs", type=list, default='X', help="Specify which amino acids should be omitted in the generated sequence, e.g. 'AC' would omit alanine and cystine.")
@@ -464,6 +550,9 @@ if __name__ == "__main__":
     argparser.add_argument("--pssm_bias_flag", type=int, default=0, help="0 for False, 1 for True")
     
     argparser.add_argument("--tied_positions_jsonl", type=str, default='', help="Path to a dictionary with tied positions")
+    argparser.add_argument("--fixed-positions", type=str, default='', help="Fix residues directly: 'A:1,2,5-8;C:10'.")
+    argparser.add_argument("--tied-positions", type=str, default='', help="Tie residues directly: 'A:1=C:1;A:2=C:2'.")
+    argparser.add_argument("--aa-bias", type=str, default='', help="Global amino-acid bias directly: 'D:1.39,E:1.39'.")
     
     args = argparser.parse_args()    
     main(args)   
