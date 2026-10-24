@@ -69,8 +69,9 @@ def main(args):
     if os.path.isfile(args.chain_id_jsonl):
         with open(args.chain_id_jsonl, 'r') as json_file:
             json_list = list(json_file)
+        chain_id_dict = {}
         for json_str in json_list:
-            chain_id_dict = json.loads(json_str)
+            chain_id_dict.update(json.loads(json_str))
     else:
         chain_id_dict = None
         if print_all:
@@ -80,8 +81,9 @@ def main(args):
     if os.path.isfile(args.fixed_positions_jsonl):
         with open(args.fixed_positions_jsonl, 'r') as json_file:
             json_list = list(json_file)
+        fixed_positions_dict = {}
         for json_str in json_list:
-            fixed_positions_dict = json.loads(json_str)
+            fixed_positions_dict.update(json.loads(json_str))
     else:
         if print_all:
             print(40*'-')
@@ -105,8 +107,9 @@ def main(args):
     if os.path.isfile(args.omit_AA_jsonl):
         with open(args.omit_AA_jsonl, 'r') as json_file:
             json_list = list(json_file)
+        omit_AA_dict = {}
         for json_str in json_list:
-            omit_AA_dict = json.loads(json_str)
+            omit_AA_dict.update(json.loads(json_str))
     else:
         if print_all:
             print(40*'-')
@@ -129,8 +132,9 @@ def main(args):
     if os.path.isfile(args.tied_positions_jsonl):
         with open(args.tied_positions_jsonl, 'r') as json_file:
             json_list = list(json_file)
+        tied_positions_dict = {}
         for json_str in json_list:
-            tied_positions_dict = json.loads(json_str)
+            tied_positions_dict.update(json.loads(json_str))
     else:
         if print_all:
             print(40*'-')
@@ -142,8 +146,9 @@ def main(args):
         with open(args.bias_by_res_jsonl, 'r') as json_file:
             json_list = list(json_file)
     
+        bias_by_res_dict = {}
         for json_str in json_list:
-            bias_by_res_dict = json.loads(json_str)
+            bias_by_res_dict.update(json.loads(json_str))
         if print_all:
             print('bias by residue dictionary is loaded')
     else:
